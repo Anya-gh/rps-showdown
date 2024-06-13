@@ -4,6 +4,6 @@ public class Record {
   public string PlayerChoice { get; set; } = "";
   public string AIChoice { get; set; } = "";
   public string Result { get; set; } = "";
-  public required User User { get; set; }
+  public User User { get; set; }
   public int UserID { get; set; }
 }

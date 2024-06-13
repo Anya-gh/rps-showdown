@@ -13,6 +13,6 @@ public class UserStats {
   public string NemesisChoice { get; set; } = "";
   public int LongestStreak { get; set; }
   public string PlayStyle { get; set; } = "";
-  public required User User { get; set; }
+  public User User { get; set; }
   public int UserID { get; set; }
 }
