@@ -1,6 +1,6 @@
 import Header from "../components/Header"
 import dropdown from "../assets/dropdown.svg"
-import rock from "../assets/rock.png"
+import rock from "../assets/rock.svg"
 import paper from "../assets/paper.svg"
 import scissors from "../assets/scissors.svg"
 import { useState } from "react"
