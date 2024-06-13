@@ -11,7 +11,7 @@ namespace backend.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Users",
+                name: "UserItems",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
@@ -21,11 +21,11 @@ namespace backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.ID);
+                    table.PrimaryKey("PK_UserItems", x => x.ID);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Records",
+                name: "RecordItems",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
@@ -38,17 +38,17 @@ namespace backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Records", x => x.ID);
+                    table.PrimaryKey("PK_RecordItems", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_Records_Users_UserID",
+                        name: "FK_RecordItems_UserItems_UserID",
                         column: x => x.UserID,
-                        principalTable: "Users",
+                        principalTable: "UserItems",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserStats",
+                name: "UserStatsItems",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
@@ -70,23 +70,23 @@ namespace backend.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserStats", x => x.ID);
+                    table.PrimaryKey("PK_UserStatsItems", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_UserStats_Users_UserID",
+                        name: "FK_UserStatsItems_UserItems_UserID",
                         column: x => x.UserID,
-                        principalTable: "Users",
+                        principalTable: "UserItems",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Records_UserID",
-                table: "Records",
+                name: "IX_RecordItems_UserID",
+                table: "RecordItems",
                 column: "UserID");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserStats_UserID",
-                table: "UserStats",
+                name: "IX_UserStatsItems_UserID",
+                table: "UserStatsItems",
                 column: "UserID",
                 unique: true);
         }
@@ -95,13 +95,13 @@ namespace backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Records");
+                name: "RecordItems");
 
             migrationBuilder.DropTable(
-                name: "UserStats");
+                name: "UserStatsItems");
 
             migrationBuilder.DropTable(
-                name: "Users");
+                name: "UserItems");
         }
     }
 }

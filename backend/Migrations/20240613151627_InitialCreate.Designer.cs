@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace backend.Migrations
 {
     [DbContext(typeof(RPSDbContext))]
-    [Migration("20240613085332_InitialCreate")]
+    [Migration("20240613151627_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -47,7 +47,7 @@ namespace backend.Migrations
 
                     b.HasIndex("UserID");
 
-                    b.ToTable("Records");
+                    b.ToTable("RecordItems");
                 });
 
             modelBuilder.Entity("User", b =>
@@ -66,7 +66,7 @@ namespace backend.Migrations
 
                     b.HasKey("ID");
 
-                    b.ToTable("Users");
+                    b.ToTable("UserItems");
                 });
 
             modelBuilder.Entity("UserStats", b =>
@@ -125,7 +125,7 @@ namespace backend.Migrations
                     b.HasIndex("UserID")
                         .IsUnique();
 
-                    b.ToTable("UserStats");
+                    b.ToTable("UserStatsItems");
                 });
 
             modelBuilder.Entity("Record", b =>

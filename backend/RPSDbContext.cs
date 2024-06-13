@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 public class RPSDbContext : DbContext {
   public RPSDbContext(DbContextOptions options) : base(options) { }
-  public virtual DbSet<User> Users { get; set; }
-  public virtual DbSet<Record> Records { get; set; }
-  public virtual DbSet<UserStats> UserStats { get; set; }
+  public virtual DbSet<User> UserItems { get; set; }
+  public virtual DbSet<Record> RecordItems { get; set; }
+  public virtual DbSet<UserStats> UserStatsItems { get; set; }
 
   protected override void OnModelCreating(ModelBuilder modelBuilder) {
         modelBuilder.Entity<User>(entity => {
