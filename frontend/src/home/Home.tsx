@@ -1,6 +1,11 @@
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react"
 import Header from "../components/Header"
 
+/*
+TODO:
+- login functionality
+*/
+
 export default function Home() {
 
   const [loggedIn, setLoggedIn] = useState(false)
