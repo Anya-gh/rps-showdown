@@ -18,3 +18,7 @@ app.UseCors(corsPolicy);
 
 var optionsBuilder = new DbContextOptionsBuilder<RPSDbContext>(); 
 optionsBuilder.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+
+app.MapGet("/", () => { return "RPS Showdown API. Welcome!"; });
+
+app.Run();
