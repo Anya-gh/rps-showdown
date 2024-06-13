@@ -9,14 +9,10 @@ public interface ISecurityHandler {
 
 public class SecurityHandler : ISecurityHandler {
 
-  public string Issuer { get; set; }
-  public string Audience { get; set; }
-  public byte[] Key { get; set; }
+  public TokenValidationParameters TokenParams { get; set; }
 
-  public SecurityHandler(string issuer, string audience, byte[] key) {
-    Issuer = issuer;
-    Audience = audience;
-    Key = key;
+  public SecurityHandler(TokenValidationParameters tokenParams) {
+    TokenParams = tokenParams;
   }
 
   public bool UserExists(UserDetails user, RPSDbContext db) {
@@ -35,9 +31,9 @@ public class SecurityHandler : ISecurityHandler {
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
       }),
       Expires = DateTime.UtcNow.AddMinutes(5),
-      Issuer = Issuer,
-      Audience = Audience,
-      SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(Key), SecurityAlgorithms.HmacSha512Signature)
+      Issuer = TokenParams.ValidIssuer,
+      Audience = TokenParams.ValidAudience,
+      SigningCredentials = new SigningCredentials(TokenParams.IssuerSigningKey, SecurityAlgorithms.HmacSha512Signature)
     };
     var tokenHandler = new JwtSecurityTokenHandler();
     var token = tokenHandler.CreateToken(tokenDescriptor);

@@ -14,19 +14,18 @@ builder.Services.AddCors(options => {
       .AllowAnyHeader();
     });
 });
-var issuer = builder.Configuration["Jwt:Issuer"];
-var audience = builder.Configuration["Jwt:Audience"];
-var key = Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]);
+
+var tokenValidationParameters = new TokenValidationParameters {
+  ValidIssuer = builder.Configuration["Jwt:Issuer"],
+  ValidAudience = builder.Configuration["Jwt:Audience"],
+  IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+};
 builder.Services.AddAuthentication(options => {
   options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
   options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
   options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options => {
-  options.TokenValidationParameters = new TokenValidationParameters {
-    ValidIssuer = issuer,
-    ValidAudience = audience,
-    IssuerSigningKey = new SymmetricSecurityKey(key)
-  };
+  options.TokenValidationParameters = tokenValidationParameters;
 });
 builder.Services.AddAuthorization();
 
@@ -39,7 +38,7 @@ app.UseAuthorization();
 var optionsBuilder = new DbContextOptionsBuilder<RPSDbContext>(); 
 optionsBuilder.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 
-SecurityHandler securityHandler = new SecurityHandler(issuer, audience, key);
+SecurityHandler securityHandler = new SecurityHandler(tokenValidationParameters);
 RouteHandler routeHandler = new RouteHandler(securityHandler);
 
 app.MapGet("/", () => { return "RPS Showdown API. Welcome!"; });
