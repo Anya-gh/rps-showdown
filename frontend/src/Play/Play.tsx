@@ -5,6 +5,12 @@ import paper from "../assets/paper.svg"
 import scissors from "../assets/scissors.svg"
 import { useState } from "react"
 
+/*
+TODO:
+- navigation
+- using real functionality
+*/
+
 export default function Play() {
 
   const [wins, setWins] = useState(9)

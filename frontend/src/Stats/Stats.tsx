@@ -5,12 +5,22 @@ import paper from "../assets/paper.svg"
 import scissors from "../assets/scissors.svg"
 import { useState } from "react";
 
+/*
+TODO:
+- navigation
+- using real values
+*/
+
 export default function Stats() {
 
   const [showPerformance, setShowPerformance] = useState(true)
 
   return (
-    <div className="flex flex-col items-center px-5 py-20 w-screen">
+    <div className="flex flex-col items-center px-5 pt-2 pb-5 w-screen">
+      <span className='flex flex-row justify-end w-full pb-16'>
+        <button className="text-zinc-500 font-bold mr-4">Play</button>
+        <button className="text-zinc-500 font-bold">Sign out</button>
+      </span>
       <Header />
       <div className="flex flex-row items-center w-3/4 justify-evenly font-bold mt-5">
         <h1>Player</h1>
