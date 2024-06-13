@@ -1,4 +1,4 @@
-import { ChangeEvent, Dispatch, SetStateAction, useState } from "react"
+import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from "react"
 import Header from "../components/Header"
 
 /*
@@ -9,6 +9,12 @@ TODO:
 export default function Home() {
 
   const [loggedIn, setLoggedIn] = useState(false)
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      setLoggedIn(true)
+    }
+  }, [setLoggedIn])
 
   return (
     <div className="flex flex-col items-center px-5 py-20 w-screen">
@@ -36,7 +42,19 @@ function LoginForm({ setLoggedIn } : LoginFormProps) {
     setValue(e.target.value)
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
+    const request = await fetch(`http://localhost:5000/access`, {
+      method: "POST",
+      headers: { "Content-Type" : "application/json" },
+      body: JSON.stringify({"Username" : username, "Password" : password})
+    })
+    if (!request.ok) {
+      throw new Error(request.statusText);
+    }
+    else {
+      const response = await request.json() as string
+      localStorage.setItem("token", response);
+    }
     setLoggedIn(true)
     // fetch post
   }
@@ -60,6 +78,7 @@ type InfoCardProps = {
 }
 
 function InfoCard({title, img, content} : InfoCardProps) {
+
   return(
     <div className="w-60 h-36 bg-[#303030] drop-shadow-xl rounded-sm p-2">
       <span className="flex flex-row items-center mb-3">
@@ -76,6 +95,12 @@ type PlayOrStatsProps = {
 }
 
 function PlayOrStats({ setLoggedIn } : PlayOrStatsProps) {
+
+  const signOutHandler = () => {
+    setLoggedIn(false);
+    localStorage.removeItem("token")
+  }
+
   return (
     <div className="w-full flex flex-col items-center my-5">
       <div className="flex flex-row items-center w-full justify-evenly mb-5">
@@ -88,7 +113,7 @@ function PlayOrStats({ setLoggedIn } : PlayOrStatsProps) {
           <img className="w-8 h-8" src="" />
         </button>
       </div>
-      <button onClick={() => setLoggedIn(false)} className="py-1 px-3 rounded-xl bg-blue-600 text-xs mb-2">Sign out</button>
+      <button onClick={signOutHandler} className="py-1 px-3 rounded-xl bg-blue-600 text-xs mb-2">Sign out</button>
     </div>
   )
 }

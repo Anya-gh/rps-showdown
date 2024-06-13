@@ -3,7 +3,8 @@ import dropdown from "../assets/dropdown.svg"
 import rock from "../assets/rock.svg"
 import paper from "../assets/paper.svg"
 import scissors from "../assets/scissors.svg"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useNavigate } from "react-router-dom"
 
 /*
 TODO:
@@ -12,6 +13,14 @@ TODO:
 */
 
 export default function Play() {
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!localStorage.getItem("token")) {
+      navigate('/')
+    }
+  })
 
   const [wins, setWins] = useState(9)
   const [draws, setDraws] = useState(4)
