@@ -8,4 +8,6 @@ function App() {
   )
 }
 
+// make requests type safe
+
 export default App

@@ -1,12 +1,11 @@
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
-var  MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var corsPolicy = "_myAllowSpecificOrigins";
 
 var builder = WebApplication.CreateBuilder(args);
-//builder.Services.AddDbContext<_>( options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")) );
+builder.Services.AddDbContext<RPSDbContext>( options => options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")) );
 builder.Services.AddCors(options => {
-  options.AddPolicy(name: MyAllowSpecificOrigins,
+  options.AddPolicy(name: corsPolicy,
     policy => {
       policy.WithOrigins("http://localhost:3000")
       .AllowAnyHeader();
@@ -15,7 +14,7 @@ builder.Services.AddCors(options => {
 
 var app = builder.Build();
 
-app.UseCors(MyAllowSpecificOrigins);
+app.UseCors(corsPolicy);
 
-//var optionsBuilder = new DbContextOptionsBuilder<_>(); 
-//optionsBuilder.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
+var optionsBuilder = new DbContextOptionsBuilder<RPSDbContext>(); 
+optionsBuilder.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
