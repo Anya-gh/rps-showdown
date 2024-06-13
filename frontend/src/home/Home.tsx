@@ -1,4 +1,5 @@
 import { ChangeEvent, Dispatch, SetStateAction, useState } from "react"
+import Header from "../components/Header"
 
 export default function Home() {
 
@@ -6,10 +7,7 @@ export default function Home() {
 
   return (
     <div className="flex flex-col items-center px-5 py-20 w-screen">
-      <span className="text-center">
-        <h1 className="font-bold text-4xl">RPS Showdown</h1>
-        <p className="italic text-xs font-thin">Return to the age old classic!</p>
-      </span>
+      <Header />
       {loggedIn ? <PlayOrStats setLoggedIn={setLoggedIn}/> : <LoginForm setLoggedIn={setLoggedIn} />}
       <div className="h-[30rem] flex flex-col items-center justify-evenly">
         <InfoCard title={"Track your stats"} img="" content="Track your wins, losses and more! Reflect on your matches against AI, see where your weakness lie and improve."/>
