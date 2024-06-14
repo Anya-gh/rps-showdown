@@ -7,4 +7,6 @@ public class Match {
   public int LevelID { get; set; }
   public User User { get; set; }
   public int UserID { get; set; }
+  public Session Session { get; set; }
+  public int SessionID { get; set; }
 }

@@ -48,4 +48,6 @@ app.MapPost("/access", (UserDetails user, RPSDbContext db) => { return routeHand
 
 app.MapGet("/validate", [Authorize] () => { return routeHandler.ValidUser(); });
 
+app.MapPost("/stats", [Authorize] (UserDetails user, RPSDbContext db) => { return routeHandler.Stats(user, db); });
+
 app.Run();

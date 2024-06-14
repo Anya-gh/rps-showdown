@@ -1,5 +1,4 @@
 public class UserStats {
-  public int ID { get; set; }
   public float Wins { get; set; }
   public float Draws { get; set; }
   public float Losses { get; set; }
