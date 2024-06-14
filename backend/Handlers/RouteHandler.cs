@@ -75,6 +75,29 @@ public class RouteHandler {
     return (rock/total, paper/total, scissors/total);
   }
 
+  public IResult CreateSession(UserDetails user, RPSDbContext db) {
+    int userID = (
+      from userItem in db.UserItems
+      where userItem.Username == user.Username
+      select userItem.ID
+    ).FirstOrDefault();
+    if (userID < 1) { return Results.NotFound(); }
+    DateTime startedAt = DateTime.UtcNow;
+    Session newSession = new Session { UserID = userID, StartedAt = startedAt };
+    try { 
+      db.SessionItems.Add(newSession);
+      db.SaveChanges();
+      int sessionID = db.SessionItems.Where(session => session.UserID == userID && session.StartedAt == startedAt).Select(session => session.ID).FirstOrDefault();
+      if (sessionID < 1) { return Results.StatusCode(500); }
+      return Results.Ok(sessionID);
+    }
+    catch (Exception ex) {
+      Console.WriteLine(ex.Message);
+      return Results.StatusCode(500);
+    }
+
+  }
+
   public IResult ValidUser() {
     return Results.Ok();
   }

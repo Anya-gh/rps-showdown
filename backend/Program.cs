@@ -50,4 +50,6 @@ app.MapGet("/validate", [Authorize] () => { return routeHandler.ValidUser(); });
 
 app.MapPost("/stats", [Authorize] (UserDetails user, RPSDbContext db) => { return routeHandler.Stats(user, db); });
 
+app.MapPost("/create-session", [Authorize] (UserDetails user, RPSDbContext db) => { return routeHandler.CreateSession(user, db); });
+
 app.Run();
