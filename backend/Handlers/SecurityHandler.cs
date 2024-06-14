@@ -30,7 +30,7 @@ public class SecurityHandler : ISecurityHandler {
         new Claim(JwtRegisteredClaimNames.Sub, user.Username),
         new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
       }),
-      Expires = DateTime.UtcNow.AddMinutes(5),
+      Expires = DateTime.UtcNow.AddHours(1),
       Issuer = TokenParams.ValidIssuer,
       Audience = TokenParams.ValidAudience,
       SigningCredentials = new SigningCredentials(TokenParams.IssuerSigningKey, SecurityAlgorithms.HmacSha512Signature)
