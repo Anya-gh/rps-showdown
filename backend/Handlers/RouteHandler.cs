@@ -39,6 +39,11 @@ public class RouteHandler {
 
   public IResult Stats(UserDetails user, RPSDbContext db) {
 
+    (float, float, float) ChoiceDistribution(int rock, int paper, int scissors) {
+      var total = Math.Max(rock + paper + scissors, 1);
+      return (rock/total, paper/total, scissors/total);
+    }
+
     int? userID = (
       from userItem in db.UserItems
       where userItem.Username == user.Username
@@ -68,11 +73,6 @@ public class RouteHandler {
       Console.WriteLine("Query is null.");
       return Results.NotFound();
     }
-  }
-
-  private (float, float, float) ChoiceDistribution(int rock, int paper, int scissors) {
-    var total = Math.Max(rock + paper + scissors, 1);
-    return (rock/total, paper/total, scissors/total);
   }
 
   public IResult CreateSession(UserDetails user, RPSDbContext db) {
