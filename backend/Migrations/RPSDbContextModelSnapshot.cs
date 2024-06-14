@@ -129,6 +129,15 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("TimesPaperUsed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TimesRockUsed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TimesScissorsUsed")
+                        .HasColumnType("INTEGER");
+
                     b.Property<int>("UserID")
                         .HasColumnType("INTEGER");
 

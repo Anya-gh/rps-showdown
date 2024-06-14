@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace backend.Migrations
 {
     [DbContext(typeof(RPSDbContext))]
-    [Migration("20240614111931_InitialCreate")]
+    [Migration("20240614112219_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -131,6 +131,15 @@ namespace backend.Migrations
                     b.Property<string>("PlayStyle")
                         .IsRequired()
                         .HasColumnType("TEXT");
+
+                    b.Property<int>("TimesPaperUsed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TimesRockUsed")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("TimesScissorsUsed")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("UserID")
                         .HasColumnType("INTEGER");
