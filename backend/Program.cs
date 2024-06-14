@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 
@@ -44,5 +45,7 @@ RouteHandler routeHandler = new RouteHandler(securityHandler);
 app.MapGet("/", () => { return "RPS Showdown API. Welcome!"; });
 
 app.MapPost("/access", (UserDetails user, RPSDbContext db) => { return routeHandler.Login(user, db); });
+
+app.MapGet("/validate", [Authorize] () => { return routeHandler.ValidUser(); });
 
 app.Run();

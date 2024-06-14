@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authorization;
+
 public interface IRouteHandler {
 
 }
@@ -26,5 +28,9 @@ public class RouteHandler {
       db.SaveChanges();
       return Results.Ok(SecurityHandler.CreateToken(user));
     }
+  }
+
+  public IResult ValidUser() {
+    return Results.Ok();
   }
 }
