@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace backend.Migrations
 {
     [DbContext(typeof(RPSDbContext))]
-    [Migration("20240613171053_InitialCreate")]
+    [Migration("20240614111931_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -18,7 +18,39 @@ namespace backend.Migrations
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "8.0.6");
 
-            modelBuilder.Entity("Record", b =>
+            modelBuilder.Entity("Level", b =>
+                {
+                    b.Property<int>("ID")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("ID");
+
+                    b.ToTable("LevelItems");
+
+                    b.HasData(
+                        new
+                        {
+                            ID = 1,
+                            Name = "Beginner"
+                        },
+                        new
+                        {
+                            ID = 2,
+                            Name = "Intermediate"
+                        },
+                        new
+                        {
+                            ID = 3,
+                            Name = "Advanced"
+                        });
+                });
+
+            modelBuilder.Entity("Match", b =>
                 {
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd()
@@ -28,9 +60,8 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("Level")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
+                    b.Property<int>("LevelID")
+                        .HasColumnType("INTEGER");
 
                     b.Property<string>("PlayerChoice")
                         .IsRequired()
@@ -45,9 +76,11 @@ namespace backend.Migrations
 
                     b.HasKey("ID");
 
+                    b.HasIndex("LevelID");
+
                     b.HasIndex("UserID");
 
-                    b.ToTable("RecordItems");
+                    b.ToTable("MatchItems");
                 });
 
             modelBuilder.Entity("User", b =>
@@ -75,32 +108,23 @@ namespace backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AceChoice")
+                    b.Property<string>("Ace")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<float>("DrawsAdvanced")
+                    b.Property<float>("Draws")
                         .HasColumnType("REAL");
 
-                    b.Property<float>("DrawsBeginner")
-                        .HasColumnType("REAL");
-
-                    b.Property<float>("DrawsIntermediate")
-                        .HasColumnType("REAL");
+                    b.Property<int>("LeveLID")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("LongestStreak")
                         .HasColumnType("INTEGER");
 
-                    b.Property<float>("LossesAdvanced")
+                    b.Property<float>("Losses")
                         .HasColumnType("REAL");
 
-                    b.Property<float>("LossesBeginner")
-                        .HasColumnType("REAL");
-
-                    b.Property<float>("LossesIntermediate")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("NemesisChoice")
+                    b.Property<string>("Nemesis")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
@@ -111,16 +135,12 @@ namespace backend.Migrations
                     b.Property<int>("UserID")
                         .HasColumnType("INTEGER");
 
-                    b.Property<float>("WinsAdvanced")
-                        .HasColumnType("REAL");
-
-                    b.Property<float>("WinsBeginner")
-                        .HasColumnType("REAL");
-
-                    b.Property<float>("WinsIntermediate")
+                    b.Property<float>("Wins")
                         .HasColumnType("REAL");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("LeveLID");
 
                     b.HasIndex("UserID")
                         .IsUnique();
@@ -128,31 +148,54 @@ namespace backend.Migrations
                     b.ToTable("UserStatsItems");
                 });
 
-            modelBuilder.Entity("Record", b =>
+            modelBuilder.Entity("Match", b =>
                 {
+                    b.HasOne("Level", "Level")
+                        .WithMany("Matches")
+                        .HasForeignKey("LevelID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("User", "User")
-                        .WithMany("Records")
+                        .WithMany("Matches")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Level");
 
                     b.Navigation("User");
                 });
 
             modelBuilder.Entity("UserStats", b =>
                 {
+                    b.HasOne("Level", "Level")
+                        .WithMany("UserStats")
+                        .HasForeignKey("LeveLID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("User", "User")
                         .WithOne("UserStats")
                         .HasForeignKey("UserStats", "UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Level");
+
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Level", b =>
+                {
+                    b.Navigation("Matches");
+
+                    b.Navigation("UserStats");
                 });
 
             modelBuilder.Entity("User", b =>
                 {
-                    b.Navigation("Records");
+                    b.Navigation("Matches");
 
                     b.Navigation("UserStats")
                         .IsRequired();

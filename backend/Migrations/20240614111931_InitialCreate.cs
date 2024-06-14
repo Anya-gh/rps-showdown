@@ -2,6 +2,8 @@
 
 #nullable disable
 
+#pragma warning disable CA1814 // Prefer jagged arrays over multidimensional
+
 namespace backend.Migrations
 {
     /// <inheritdoc />
@@ -10,6 +12,19 @@ namespace backend.Migrations
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "LevelItems",
+                columns: table => new
+                {
+                    ID = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    Name = table.Column<string>(type: "TEXT", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LevelItems", x => x.ID);
+                });
+
             migrationBuilder.CreateTable(
                 name: "UserItems",
                 columns: table => new
@@ -25,22 +40,28 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "RecordItems",
+                name: "MatchItems",
                 columns: table => new
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    Level = table.Column<string>(type: "TEXT", nullable: false),
                     PlayerChoice = table.Column<string>(type: "TEXT", nullable: false),
                     AIChoice = table.Column<string>(type: "TEXT", nullable: false),
                     Result = table.Column<string>(type: "TEXT", nullable: false),
+                    LevelID = table.Column<int>(type: "INTEGER", nullable: false),
                     UserID = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_RecordItems", x => x.ID);
+                    table.PrimaryKey("PK_MatchItems", x => x.ID);
                     table.ForeignKey(
-                        name: "FK_RecordItems_UserItems_UserID",
+                        name: "FK_MatchItems_LevelItems_LevelID",
+                        column: x => x.LevelID,
+                        principalTable: "LevelItems",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MatchItems_UserItems_UserID",
                         column: x => x.UserID,
                         principalTable: "UserItems",
                         principalColumn: "ID",
@@ -53,24 +74,25 @@ namespace backend.Migrations
                 {
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    WinsBeginner = table.Column<float>(type: "REAL", nullable: false),
-                    DrawsBeginner = table.Column<float>(type: "REAL", nullable: false),
-                    LossesBeginner = table.Column<float>(type: "REAL", nullable: false),
-                    WinsIntermediate = table.Column<float>(type: "REAL", nullable: false),
-                    DrawsIntermediate = table.Column<float>(type: "REAL", nullable: false),
-                    LossesIntermediate = table.Column<float>(type: "REAL", nullable: false),
-                    WinsAdvanced = table.Column<float>(type: "REAL", nullable: false),
-                    DrawsAdvanced = table.Column<float>(type: "REAL", nullable: false),
-                    LossesAdvanced = table.Column<float>(type: "REAL", nullable: false),
-                    AceChoice = table.Column<string>(type: "TEXT", nullable: false),
-                    NemesisChoice = table.Column<string>(type: "TEXT", nullable: false),
+                    Wins = table.Column<float>(type: "REAL", nullable: false),
+                    Draws = table.Column<float>(type: "REAL", nullable: false),
+                    Losses = table.Column<float>(type: "REAL", nullable: false),
+                    Ace = table.Column<string>(type: "TEXT", nullable: false),
+                    Nemesis = table.Column<string>(type: "TEXT", nullable: false),
                     LongestStreak = table.Column<int>(type: "INTEGER", nullable: false),
                     PlayStyle = table.Column<string>(type: "TEXT", nullable: false),
-                    UserID = table.Column<int>(type: "INTEGER", nullable: false)
+                    UserID = table.Column<int>(type: "INTEGER", nullable: false),
+                    LeveLID = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_UserStatsItems", x => x.ID);
+                    table.ForeignKey(
+                        name: "FK_UserStatsItems_LevelItems_LeveLID",
+                        column: x => x.LeveLID,
+                        principalTable: "LevelItems",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_UserStatsItems_UserItems_UserID",
                         column: x => x.UserID,
@@ -79,10 +101,30 @@ namespace backend.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "LevelItems",
+                columns: new[] { "ID", "Name" },
+                values: new object[,]
+                {
+                    { 1, "Beginner" },
+                    { 2, "Intermediate" },
+                    { 3, "Advanced" }
+                });
+
             migrationBuilder.CreateIndex(
-                name: "IX_RecordItems_UserID",
-                table: "RecordItems",
+                name: "IX_MatchItems_LevelID",
+                table: "MatchItems",
+                column: "LevelID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MatchItems_UserID",
+                table: "MatchItems",
                 column: "UserID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserStatsItems_LeveLID",
+                table: "UserStatsItems",
+                column: "LeveLID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserStatsItems_UserID",
@@ -95,10 +137,13 @@ namespace backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "RecordItems");
+                name: "MatchItems");
 
             migrationBuilder.DropTable(
                 name: "UserStatsItems");
+
+            migrationBuilder.DropTable(
+                name: "LevelItems");
 
             migrationBuilder.DropTable(
                 name: "UserItems");

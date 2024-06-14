@@ -1,18 +1,14 @@
 public class UserStats {
   public int ID { get; set; }
-  public float WinsBeginner { get; set; }
-  public float DrawsBeginner { get; set; }
-  public float LossesBeginner { get; set; }
-  public float WinsIntermediate { get; set; }
-  public float DrawsIntermediate { get; set; }
-  public float LossesIntermediate { get; set; }
-  public float WinsAdvanced { get; set; }
-  public float DrawsAdvanced { get; set; }
-  public float LossesAdvanced { get; set; }
-  public string AceChoice { get; set; } = "";
-  public string NemesisChoice { get; set; } = "";
+  public float Wins { get; set; }
+  public float Draws { get; set; }
+  public float Losses { get; set; }
+  public string Ace { get; set; } = "";
+  public string Nemesis { get; set; } = "";
   public int LongestStreak { get; set; }
   public string PlayStyle { get; set; } = "";
   public User User { get; set; }
   public int UserID { get; set; }
+  public Level Level { get; set; }
+  public int LeveLID { get; set; }
 }
