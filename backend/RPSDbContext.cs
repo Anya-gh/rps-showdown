@@ -26,5 +26,8 @@ public class RPSDbContext : DbContext {
           new Level { ID = 2, Name = "Intermediate" },
           new Level { ID = 3, Name = "Advanced" }
         );
+        modelBuilder.Entity<Session>(entity => {
+          entity.HasOne(s => s.Level).WithMany(l => l.Sessions).HasForeignKey(s => s.LevelID);
+        });
     }
 }

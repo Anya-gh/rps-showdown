@@ -92,6 +92,9 @@ namespace backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
+                    b.Property<int>("LevelID")
+                        .HasColumnType("INTEGER");
+
                     b.Property<DateTime>("StartedAt")
                         .HasColumnType("TEXT");
 
@@ -99,6 +102,8 @@ namespace backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("LevelID");
 
                     b.HasIndex("UserID");
 
@@ -202,11 +207,19 @@ namespace backend.Migrations
 
             modelBuilder.Entity("Session", b =>
                 {
+                    b.HasOne("Level", "Level")
+                        .WithMany("Sessions")
+                        .HasForeignKey("LevelID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("User", "User")
                         .WithMany("Sessions")
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Level");
 
                     b.Navigation("User");
                 });
@@ -233,6 +246,8 @@ namespace backend.Migrations
             modelBuilder.Entity("Level", b =>
                 {
                     b.Navigation("Matches");
+
+                    b.Navigation("Sessions");
 
                     b.Navigation("UserStats");
                 });
