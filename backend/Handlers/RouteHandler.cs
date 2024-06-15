@@ -108,7 +108,7 @@ public class RouteHandler {
 
       var losingMatchesAgainstChoice = choices.Select(choice => new MatchesWithChoice(choice, (
         from match in matches
-        where match.LevelID == levelID && match.AIChoice == choice && match.Result == "lose"
+        where match.LevelID == levelID && match.BotChoice == choice && match.Result == "lose"
         select match
       ).ToList())).ToList();
 
@@ -199,16 +199,17 @@ public class RouteHandler {
       select sessionItem.LevelID
     ).FirstOrDefault();
     if (levelID < 1) { return Results.NotFound(); }
-    
-    LevelHandler levelHandler = new LevelHandler();
-    ILevel? AI = levelHandler.GetAI(levelID);
-    if (AI == null) { return Results.NotFound(); }
+
+    BotHandler botHandler = new BotHandler();
+    IBot? Bot = botHandler.GetBot(levelID);
+    if (Bot == null) { return Results.NotFound(); }
     List<Match> matches = (
       from matchItem in db.MatchItems
       where matchItem.SessionID == play.SessionID
       select matchItem
     ).ToList();
-    string AIChoice = AI.Play(matches);
+
+    string BotChoice = Bot.Play(matches);
     var outcomes = new Dictionary<(string, string), string>() {
       {("rock", "rock"), "draw"},
       {("rock", "paper"), "lose"},
@@ -220,8 +221,11 @@ public class RouteHandler {
       {("scissors", "paper"), "win"},
       {("scissors", "scissors"), "draw"}
     };
-    string outcome = outcomes[(play.PlayerChoice, AIChoice)];
-    PlayResponse playResponse = new PlayResponse(AIChoice, outcome);
+    string outcome = outcomes[(play.PlayerChoice, BotChoice)];
+
+    //Match newMatch = new Match { PlayerChoice = play.PlayerChoice, BotChoice = }
+
+    PlayResponse playResponse = new PlayResponse(BotChoice, outcome);
     return Results.Ok(playResponse);
     // create match
     // update userstats

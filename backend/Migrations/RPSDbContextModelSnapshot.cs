@@ -54,7 +54,7 @@ namespace backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("AIChoice")
+                    b.Property<string>("BotChoice")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

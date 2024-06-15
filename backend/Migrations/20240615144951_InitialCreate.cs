@@ -74,7 +74,7 @@ namespace backend.Migrations
                     ID = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
                     PlayerChoice = table.Column<string>(type: "TEXT", nullable: false),
-                    AIChoice = table.Column<string>(type: "TEXT", nullable: false),
+                    BotChoice = table.Column<string>(type: "TEXT", nullable: false),
                     Result = table.Column<string>(type: "TEXT", nullable: false),
                     LevelID = table.Column<int>(type: "INTEGER", nullable: false),
                     UserID = table.Column<int>(type: "INTEGER", nullable: false),
