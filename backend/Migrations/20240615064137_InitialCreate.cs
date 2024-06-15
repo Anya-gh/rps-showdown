@@ -68,40 +68,6 @@ namespace backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserStatsItems",
-                columns: table => new
-                {
-                    UserID = table.Column<int>(type: "INTEGER", nullable: false),
-                    LeveLID = table.Column<int>(type: "INTEGER", nullable: false),
-                    Wins = table.Column<float>(type: "REAL", nullable: false),
-                    Draws = table.Column<float>(type: "REAL", nullable: false),
-                    Losses = table.Column<float>(type: "REAL", nullable: false),
-                    TimesRockUsed = table.Column<int>(type: "INTEGER", nullable: false),
-                    TimesPaperUsed = table.Column<int>(type: "INTEGER", nullable: false),
-                    TimesScissorsUsed = table.Column<int>(type: "INTEGER", nullable: false),
-                    Ace = table.Column<string>(type: "TEXT", nullable: false),
-                    Nemesis = table.Column<string>(type: "TEXT", nullable: false),
-                    LongestStreak = table.Column<int>(type: "INTEGER", nullable: false),
-                    PlayStyle = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserStatsItems", x => new { x.UserID, x.LeveLID });
-                    table.ForeignKey(
-                        name: "FK_UserStatsItems_LevelItems_LeveLID",
-                        column: x => x.LeveLID,
-                        principalTable: "LevelItems",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserStatsItems_UserItems_UserID",
-                        column: x => x.UserID,
-                        principalTable: "UserItems",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "MatchItems",
                 columns: table => new
                 {
@@ -171,11 +137,6 @@ namespace backend.Migrations
                 name: "IX_SessionItems_UserID",
                 table: "SessionItems",
                 column: "UserID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserStatsItems_LeveLID",
-                table: "UserStatsItems",
-                column: "LeveLID");
         }
 
         /// <inheritdoc />
@@ -183,9 +144,6 @@ namespace backend.Migrations
         {
             migrationBuilder.DropTable(
                 name: "MatchItems");
-
-            migrationBuilder.DropTable(
-                name: "UserStatsItems");
 
             migrationBuilder.DropTable(
                 name: "SessionItems");

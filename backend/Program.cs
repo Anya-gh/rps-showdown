@@ -50,6 +50,10 @@ app.MapGet("/validate", [Authorize] () => { return routeHandler.ValidUser(); });
 
 app.MapPost("/stats", [Authorize] (UserDetails user, RPSDbContext db) => { return routeHandler.Stats(user, db); });
 
-app.MapPost("/create-session", [Authorize] (UserDetails user, RPSDbContext db) => { return routeHandler.CreateSession(user, db); });
+app.MapPost("/create-session", [Authorize] (SessionDetails session, RPSDbContext db) => { return routeHandler.CreateSession(session, db); });
+
+app.MapGet("/play-info", (RPSDbContext db) => { return routeHandler.GetPlayInfo(db); });
+
+app.MapPost("play", [Authorize] (PlayDetails play, RPSDbContext db) => { return routeHandler.Play(play, db); });
 
 app.Run();

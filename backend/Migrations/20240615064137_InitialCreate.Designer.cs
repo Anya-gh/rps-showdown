@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace backend.Migrations
 {
     [DbContext(typeof(RPSDbContext))]
-    [Migration("20240614175143_InitialCreate")]
+    [Migration("20240615064137_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -132,55 +132,6 @@ namespace backend.Migrations
                     b.ToTable("UserItems");
                 });
 
-            modelBuilder.Entity("UserStats", b =>
-                {
-                    b.Property<int>("UserID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("LeveLID")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<string>("Ace")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<float>("Draws")
-                        .HasColumnType("REAL");
-
-                    b.Property<int>("LongestStreak")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<float>("Losses")
-                        .HasColumnType("REAL");
-
-                    b.Property<string>("Nemesis")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<string>("PlayStyle")
-                        .IsRequired()
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("TimesPaperUsed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TimesRockUsed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<int>("TimesScissorsUsed")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<float>("Wins")
-                        .HasColumnType("REAL");
-
-                    b.HasKey("UserID", "LeveLID")
-                        .HasName("PK_UserStatsItems");
-
-                    b.HasIndex("LeveLID");
-
-                    b.ToTable("UserStatsItems");
-                });
-
             modelBuilder.Entity("Match", b =>
                 {
                     b.HasOne("Level", "Level")
@@ -227,32 +178,11 @@ namespace backend.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("UserStats", b =>
-                {
-                    b.HasOne("Level", "Level")
-                        .WithMany("UserStats")
-                        .HasForeignKey("LeveLID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("User", "User")
-                        .WithMany("UserStats")
-                        .HasForeignKey("UserID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Level");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Level", b =>
                 {
                     b.Navigation("Matches");
 
                     b.Navigation("Sessions");
-
-                    b.Navigation("UserStats");
                 });
 
             modelBuilder.Entity("Session", b =>
@@ -265,8 +195,6 @@ namespace backend.Migrations
                     b.Navigation("Matches");
 
                     b.Navigation("Sessions");
-
-                    b.Navigation("UserStats");
                 });
 #pragma warning restore 612, 618
         }
