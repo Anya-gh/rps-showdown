@@ -200,14 +200,15 @@ public class RouteHandler {
     ).FirstOrDefault();
     if (levelID < 1) { return Results.NotFound(); }
 
-    BotHandler botHandler = new BotHandler();
-    IBot? Bot = botHandler.GetBot(levelID);
-    if (Bot == null) { return Results.NotFound(); }
     List<Match> matches = (
       from matchItem in db.MatchItems
       where matchItem.SessionID == play.SessionID
       select matchItem
     ).ToList();
+
+    BotHandler botHandler = new BotHandler();
+    IBot? Bot = botHandler.GetBot(levelID);
+    if (Bot == null) { return Results.NotFound(); }
 
     string BotChoice = Bot.Play(matches);
     var outcomes = new Dictionary<(string, string), string>() {
@@ -223,7 +224,9 @@ public class RouteHandler {
     };
     string outcome = outcomes[(play.PlayerChoice, BotChoice)];
 
-    //Match newMatch = new Match { PlayerChoice = play.PlayerChoice, BotChoice = }
+    Match newMatch = new Match { PlayerChoice = play.PlayerChoice, BotChoice = BotChoice, Result = outcome, LevelID = levelID, SessionID = play.SessionID, UserID = userID };
+    db.MatchItems.Add(newMatch);
+    db.SaveChanges();
 
     PlayResponse playResponse = new PlayResponse(BotChoice, outcome);
     return Results.Ok(playResponse);
