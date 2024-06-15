@@ -230,9 +230,6 @@ public class RouteHandler {
 
     PlayResponse playResponse = new PlayResponse(BotChoice, outcome);
     return Results.Ok(playResponse);
-    // create match
-    // update userstats
-
   }
 
   public IResult ValidUser() {
