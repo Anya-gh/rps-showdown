@@ -54,6 +54,6 @@ app.MapPost("/create-session", [Authorize] (SessionDetails session, RPSDbContext
 
 app.MapGet("/play-info", (RPSDbContext db) => { return routeHandler.GetPlayInfo(db); });
 
-app.MapPost("play", [Authorize] (PlayDetails play, RPSDbContext db) => { return routeHandler.Play(play, db); });
+app.MapPost("/play", [Authorize] (PlayDetails play, RPSDbContext db) => { return routeHandler.Play(play, db); });
 
 app.Run();
