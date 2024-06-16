@@ -3,8 +3,13 @@ import dropdown from "../assets/dropdown.svg"
 import rock from "../assets/rock.svg"
 import paper from "../assets/paper.svg"
 import scissors from "../assets/scissors.svg"
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { StatsType } from "../Types";
+import { useNavigate } from "react-router-dom";
 import ValidateUser from "../components/ValidateUser";
+import { Pie } from "react-chartjs-2";
+import { Chart, ArcElement, Colors, Legend, Color } from "chart.js";
+import ChartDataLabels from 'chartjs-plugin-datalabels'
 
 /*
 TODO:
@@ -14,7 +19,40 @@ TODO:
 
 export default function Stats() {
 
-  ValidateUser()
+  const [userStats, setUserStats] = useState<StatsType[]>();
+  const [level, setLevel] = useState(0);
+  const levelNames = ["Beginner", "Intermediate", "Advanced"]
+  const [showLevels, setShowLevels] = useState(false)
+  const navigate = useNavigate();
+  useEffect(() => {
+    ValidateUser(navigate);
+
+    fetchStats();
+    async function fetchStats() {
+      const request = await fetch("http://localhost:5000/stats", {
+        method: "POST",
+        headers: { 
+          "Content-Type" : "application/json",
+          "Authorization" : `bearer ${localStorage.getItem("token")}` // Must exist because of ValidateUser
+        },
+        body: JSON.stringify({"Username" : localStorage.getItem("username")})
+      })
+      if (!request.ok) {
+        console.log('woops')
+        throw new Error(request.statusText);
+      }
+      else {
+        const response = await request.json() as StatsType[]
+        console.log(localStorage.getItem("username"));
+        setUserStats(response);
+      }
+    }
+  }, [])
+
+
+  useEffect(() => {
+    console.log(userStats);
+  }, [userStats])
 
   const [showPerformance, setShowPerformance] = useState(true)
 
@@ -28,36 +66,52 @@ export default function Stats() {
       <div className="flex flex-row items-center w-3/4 justify-evenly font-bold mt-5">
         <h1>Player</h1>
         <p>vs</p>
-        <button className="flex flex-row items-center">
-          <h1 className="mr-3">Beginner</h1>
-          <img className="w-3 rotate-180" src={dropdown} />
-        </button>
+        <div>
+          <button onClick={() => setShowLevels(prev => !prev)} className="flex flex-row items-center">
+            <h1 className="mr-3">{levelNames[level]}</h1>
+            <img className={`w-3 ${!showLevels && "rotate-180"}`} src={dropdown} />
+          </button>
+          {showLevels && 
+            <div className="absolute pt-3">
+              <ul className="bg-[#202020] rounded-xl p-2 flex flex-col w-32 items-start">
+                {levelNames.map((levelName, index) => {
+                  if (index != level) return (<button key={levelName} onClick={() => {setShowLevels(false); setLevel(index)}}><h1>{levelName}</h1></button>)
+                })}
+              </ul>
+            </div>
+          }
+        </div>
       </div>
       <span className='flex flex-row w-3/4 justify-between mt-5'>
         <button className="font-bold" onClick={() => setShowPerformance(true)}>Performance</button>
         <button className="font-bold" onClick={() => setShowPerformance(false)}>Analysis</button>
       </span>
-      {showPerformance ? <Performance /> : <Analysis />}
+      {userStats && (showPerformance ? <Performance userStats={userStats[level]}/> : <Analysis userStats={userStats[level]}/>)}
     </div>
   )
 }
 
-function Performance() {
+type PerformanceProps = {
+  userStats: StatsType
+}
 
-  const [winrate, setWinrate] = useState(76)
-  const [streak, setStreak] = useState(8)
+function Performance({ userStats } : PerformanceProps) {
+
+  useEffect(() => {
+    console.log(userStats);
+  }, [userStats])
 
   return (
     <div className="mt-5 w-full flex flex-col items-center">
       <span className="flex flex-col items-center font-bold mb-5">
         <h1 className="text mb-3">Win Rate</h1>
-        <p className="text-3xl">{winrate} %</p>
+        <p className="text-3xl">{Math.round(userStats.winRate*100)} %</p>
       </span>
       <span className="flex flex-col items-center font-bold mb-5">
         <h1 className="text mb-3">Longest Win Streak</h1>
-        <p className="text-3xl">{streak} Wins</p>
+        <p className="text-3xl">{userStats.longestStreak} Wins</p>
       </span>
-      <Leaderboard />
+      {/*<Leaderboard />*/}
     </div>
   )
 
@@ -97,30 +151,97 @@ function Performance() {
   }
 }
 
-function Analysis() {
+type AnalysisProps = {
+  userStats: StatsType
+}
 
-  const [playstyle, setPlaystyle] = useState("Aggressive")
-  const [ace, setAce] = useState(rock)
-  const [nemesis, setNemesis] = useState(scissors)
+function Analysis({ userStats } : AnalysisProps) {
+
+  Chart.register(ArcElement);
+  Chart.register(Colors);
+  Chart.register(Legend);
+  Chart.register(ChartDataLabels);
+
+  const [ace, setAce] = useState<string>()
+  const [nemesis, setNemesis] = useState<string>()
+
+  type PieChartData = {
+    datasets: {
+      data: number[],
+    }[],
+    labels: string[]
+  }
+  const choiceDistData: PieChartData = {
+    datasets : [{
+      data: [userStats.choiceDistribution.rock, userStats.choiceDistribution.paper, userStats.choiceDistribution.scissors],
+    }],
+    labels: ["Rock", "Paper", "Scissors"]
+  }
+
+  type PieChartOptions = {
+    responsive: boolean,
+    plugins : {
+      legend: {
+        position: "top" | "bottom" | "right" | "left",
+        labels : {
+          color: Color
+        }
+      },
+      datalabels: {
+        color: Color,
+        formatter: (value:number) => string
+      }
+    }
+  }
+
+  const options: PieChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'top',
+        labels : {
+          color: "#c5c5c5" 
+        }
+      },
+      datalabels : {
+        color: "#e9e9e9",
+        formatter: function (value:number) {
+          return `${Math.round(value * 100)}%`;
+        },
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (userStats.ace == "rock") { setAce(rock) }
+    else if (userStats.ace == "paper") { setAce(paper) }
+    else if (userStats.ace == "scissors") { setAce(scissors) }
+    else { console.error("Invalid ace.") }
+
+    if (userStats.nemesis == "rock") { setNemesis(rock) }
+    else if (userStats.nemesis == "paper") { setNemesis(paper) }
+    else if (userStats.nemesis == "scissors") { setNemesis(scissors) }
+    else { console.error("Invalid nemesis.") }
+  }, [userStats])
 
   return (
     <div className="w-full mt-5">
       <div className="flex flex-col items-center justify-evenly text-lg font-bold">
         <span className="flex flex-col items-center mb-5">
           <h1 className="mb-5">Choice Distribution</h1>
-          <img className="w-24 h-24" src="" />
+          <span className="w-48">{choiceDistData && <Pie data={choiceDistData} options={options}/>}</span>
         </span>
         <span className="flex flex-col items-center mb-5">
           <h1 className="mb-5">Ace</h1>
-          <img className="w-24" src={ace} />
+          {userStats.ace != "none" ? <img className="w-24" src={ace} /> : <h1>None</h1>}
         </span>
         <span className="flex flex-col items-center mb-10">
           <h1 className="mb-5">Nemesis</h1>
-          <img className="w-24" src={nemesis} />
+          {userStats.nemesis != "none" ? <img className="w-24" src={nemesis} /> : <h1>None</h1>}
         </span>
         <span className="flex flex-col items-center mb-5">
           <h1 className="mb-10">Playstyle</h1>
-          <p className="text-3xl">{playstyle}</p>
+          <p className="text-3xl capitalize">{userStats.style}</p>
         </span>
       </div>
     </div>
