@@ -1,19 +1,7 @@
 import { ChangeEvent, Dispatch, SetStateAction, useState, useEffect } from "react"
 import Header from "../components/Header"
 
-/*
-TODO:
-- login functionality
-*/
-
-type HomeProps = {
-  username: string,
-  setUsername: Dispatch<SetStateAction<string>>,
-  password: string,
-  setPassword: Dispatch<SetStateAction<string>>
-}
-
-export default function Home({ username, setUsername, password, setPassword } : HomeProps) {
+export default function Home() {
 
   const [loggedIn, setLoggedIn] = useState(false)
 
