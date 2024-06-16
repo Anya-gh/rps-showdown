@@ -11,7 +11,8 @@ function ValidateUser(navigate: NavigateFunction) {
     const request = await fetch("http://localhost:5000/validate", {
       method: "GET",
       headers: {
-        "ContentType" : "application/json"
+        "ContentType" : "application/json",
+        "Authorization" : `bearer ${token}`
       }
     })
     if (!request.ok) { navigate('/') }
