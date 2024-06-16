@@ -100,17 +100,17 @@ public class AdvancedBot : IBot {
 
       List<string> playerChoices = matches.Select(match => match.PlayerChoice).ToList();
       var transMatrix = new Dictionary<string, Dictionary<string, float>>();
-      var transCounts = new Dictionary<string, Dictionary<string, int>>();
-      var totalCounts = new Dictionary<string, int>();
+      var transCounts = new Dictionary<string, Dictionary<string, float>>();
+      var totalCounts = new Dictionary<string, float>();
 
       // Initialise transMatrix, transCounts and totalCounts to zeros
       foreach (string prevChoice in Choices) {
         totalCounts[prevChoice] = 0;
         transMatrix.Add(prevChoice, new Dictionary<string, float>());
-        transCounts.Add(prevChoice, new Dictionary<string, int>());
+        transCounts.Add(prevChoice, new Dictionary<string, float>());
         foreach (string nextChoice in Choices) {
           transMatrix[prevChoice].Add(nextChoice, 0.0f);
-          transCounts[prevChoice].Add(nextChoice, 0);
+          transCounts[prevChoice].Add(nextChoice, 0.0f);
         }
       }
 
@@ -128,9 +128,17 @@ public class AdvancedBot : IBot {
         }
       }
 
+      foreach (string prevChoice in Choices) {
+        Console.WriteLine("{0} total: {1}", prevChoice, totalCounts[prevChoice]);
+        foreach (string nextChoice in Choices) {
+          Console.WriteLine("{0}->{1} count : {2}", prevChoice, nextChoice, transCounts[prevChoice][nextChoice]);
+          Console.WriteLine("{0}->{1} prob : {2}", prevChoice, nextChoice, transMatrix[prevChoice][nextChoice]);
+        }
+      }
+
       Match lastMatch = matches.Last();
       var choicesByProbability = transMatrix[lastMatch.PlayerChoice];
-      // This can only be null if PlayerChoice isn't in Choices, which shouldn't give a valid return anyway.
+
       string mostLikelyChoice = choicesByProbability.MaxBy(kvp => kvp.Value).Key!;
       return WinOutcomes[mostLikelyChoice];
     }
