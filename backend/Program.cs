@@ -56,4 +56,6 @@ app.MapGet("/play-info", (RPSDbContext db) => { return routeHandler.GetPlayInfo(
 
 app.MapPost("/play", [Authorize] (PlayDetails play, RPSDbContext db) => { return routeHandler.Play(play, db); });
 
+app.MapPost("/spectate", [Authorize] (SpectateRequest request, RPSDbContext db) => { return routeHandler.Spectate(request, db); });
+
 app.Run();

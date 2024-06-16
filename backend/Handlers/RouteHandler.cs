@@ -162,6 +162,7 @@ public class RouteHandler {
   }
 
   public IResult CreateSession(SessionDetails session, RPSDbContext db) {
+    if (session.PlayerID == session.LevelID) { return Results.BadRequest("The two players in one session cannot be the same."); }
     int userID = (
       from userItem in db.UserItems
       where userItem.Username == session.Username
@@ -169,7 +170,7 @@ public class RouteHandler {
     ).FirstOrDefault();
     if (userID < 1) { return Results.NotFound(); }
     DateTime startedAt = DateTime.UtcNow;
-    Session newSession = new Session { UserID = userID, StartedAt = startedAt, LevelID = session.LevelID };
+    Session newSession = new Session { UserID = userID, StartedAt = startedAt, PlayerID = session.PlayerID, LevelID = session.LevelID };
     try { 
       db.SessionItems.Add(newSession);
       db.SaveChanges();
@@ -191,14 +192,14 @@ public class RouteHandler {
       where userItem.Username == play.Username
       select userItem.ID
     ).FirstOrDefault();
-    if (userID < 1) { return Results.NotFound(); }
+    if (userID < 1) { return Results.NotFound("Username not found."); }
 
     int levelID = (
       from sessionItem in db.SessionItems
       where sessionItem.ID == play.SessionID
       select sessionItem.LevelID
     ).FirstOrDefault();
-    if (levelID < 1) { return Results.NotFound(); }
+    if (levelID < 1) { return Results.NotFound("Bot level not found."); }
 
     List<Match> matches = (
       from matchItem in db.MatchItems
@@ -208,7 +209,7 @@ public class RouteHandler {
 
     BotHandler botHandler = new BotHandler();
     IBot? Bot = botHandler.GetBot(levelID);
-    if (Bot == null) { return Results.NotFound(); }
+    if (Bot == null) { return Results.StatusCode(500); }
 
     string BotChoice = Bot.Play(matches);
     var outcomes = new Dictionary<(string, string), string>() {
@@ -230,6 +231,81 @@ public class RouteHandler {
 
     PlayResponse playResponse = new PlayResponse(BotChoice, outcome);
     return Results.Ok(playResponse);
+  }
+
+  public IResult Spectate(SpectateRequest request, RPSDbContext db) {
+    int userID = (
+      from userItem in db.UserItems
+      where userItem.Username == request.Username
+      select userItem.ID
+    ).FirstOrDefault();
+    if (userID < 1) { return Results.NotFound("Username not found."); }
+
+    int levelID = (
+      from sessionItem in db.SessionItems
+      where sessionItem.ID == request.SessionID
+      select sessionItem.LevelID
+    ).FirstOrDefault();
+    if (levelID == 0) { return Results.NotFound("Session does not exist."); }
+    if (levelID < 0) { return Results.BadRequest("Cannot spectate session unless both players are bots."); }
+
+    int playerID = (
+      from sessionItem in db.SessionItems
+      where sessionItem.ID == request.SessionID
+      select sessionItem.PlayerID
+    ).FirstOrDefault();
+
+    if (playerID == 0) { return Results.NotFound("Session does not exist."); }
+    if (playerID < 0) { return Results.BadRequest("Cannot spectate session unless both players are bots."); }
+
+    List<Match> playerMatches = (
+      from matchItem in db.MatchItems
+      where matchItem.SessionID == request.SessionID && matchItem.PlayerID == playerID
+      select matchItem
+    ).ToList();
+
+    List<Match> levelMatches = (
+      from matchItem in db.MatchItems
+      where matchItem.SessionID == request.SessionID && matchItem.PlayerID == levelID
+      select matchItem
+    ).ToList();
+
+    BotHandler botHandler = new BotHandler();
+    IBot? PlayerBot = botHandler.GetBot(playerID);
+    if (PlayerBot == null) { return Results.NotFound(); }
+    IBot? LevelBot = botHandler.GetBot(levelID);
+    if (LevelBot == null) { return Results.NotFound(); }
+    
+    string PlayerChoice = PlayerBot.Play(playerMatches);
+    string LevelChoice = LevelBot.Play(levelMatches);
+
+    var outcomes = new Dictionary<(string, string), string>() {
+      {("rock", "rock"), "draw"},
+      {("rock", "paper"), "lose"},
+      {("rock", "scissors"), "win"},
+      {("paper", "rock"), "win"},
+      {("paper", "paper"), "draw"},
+      {("paper", "scissors"), "lose"},
+      {("scissors", "rock"), "lose"},
+      {("scissors", "paper"), "win"},
+      {("scissors", "scissors"), "draw"}
+    };
+
+    string playerOutcome = outcomes[(PlayerChoice, LevelChoice)];
+    Match playerMatch = new Match { PlayerChoice = PlayerChoice, BotChoice = LevelChoice, Result = playerOutcome, PlayerID = playerID, LevelID = levelID, SessionID = request.SessionID, UserID = userID };
+
+    string levelOutcome = outcomes[(LevelChoice, PlayerChoice)];
+    Match levelMatch = new Match { PlayerChoice = LevelChoice, BotChoice = PlayerChoice, Result = levelOutcome, PlayerID = levelID, LevelID = playerID, SessionID = request.SessionID, UserID = userID };
+
+    Console.WriteLine("{0}: {1}", levelID, levelMatches.Last().Result);
+    Console.WriteLine("{0}: {1}", playerID, playerMatches.Last().Result);
+
+    db.MatchItems.Add(playerMatch);
+    db.MatchItems.Add(levelMatch);
+    db.SaveChanges();
+
+    SpectateResponse response = new SpectateResponse { PlayerChoice = PlayerChoice, LevelChoice = LevelChoice, Result = playerOutcome };
+    return Results.Ok(response);
   }
 
   public IResult ValidUser() {

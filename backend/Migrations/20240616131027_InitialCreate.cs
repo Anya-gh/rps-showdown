@@ -48,6 +48,7 @@ namespace backend.Migrations
                         .Annotation("Sqlite:Autoincrement", true),
                     StartedAt = table.Column<DateTime>(type: "TEXT", nullable: false),
                     UserID = table.Column<int>(type: "INTEGER", nullable: false),
+                    PlayerID = table.Column<int>(type: "INTEGER", nullable: false),
                     LevelID = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
@@ -56,6 +57,12 @@ namespace backend.Migrations
                     table.ForeignKey(
                         name: "FK_SessionItems_LevelItems_LevelID",
                         column: x => x.LevelID,
+                        principalTable: "LevelItems",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_SessionItems_LevelItems_PlayerID",
+                        column: x => x.PlayerID,
                         principalTable: "LevelItems",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -145,6 +152,11 @@ namespace backend.Migrations
                 name: "IX_SessionItems_LevelID",
                 table: "SessionItems",
                 column: "LevelID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_SessionItems_PlayerID",
+                table: "SessionItems",
+                column: "PlayerID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SessionItems_UserID",

@@ -26,7 +26,8 @@ public class RPSDbContext : DbContext {
           new Level { ID = 3, Name = "Advanced" }
         );
         modelBuilder.Entity<Session>(entity => {
-          entity.HasOne(s => s.Level).WithMany(l => l.Sessions).HasForeignKey(s => s.LevelID);
+          entity.HasOne(s => s.Level).WithMany(l => l.LevelSessions).HasForeignKey(s => s.LevelID);
+          entity.HasOne(s => s.Player).WithMany(l => l.PlayerSessions).HasForeignKey(s => s.PlayerID);
         });
     }
 }
