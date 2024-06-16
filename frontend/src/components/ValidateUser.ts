@@ -1,25 +1,21 @@
-import { useNavigate } from "react-router-dom"
-import { useEffect } from "react"
+import { NavigateFunction } from "react-router-dom"
 
-function ValidateUser() {
-  const navigate = useNavigate()
+function ValidateUser(navigate: NavigateFunction) {
 
-  useEffect(() => {
-    const token = localStorage.getItem("token")
-    if (token) { validateUser() }
-    else { navigate('/') }
+  const token = localStorage.getItem("token")
+  const username = localStorage.getItem("username")
+  if (token && username) { validateUser() }
+  else { navigate('/') }
 
-    async function validateUser() {
-      const request = await fetch("localhost:5000/validate", {
-        method: "GET",
-        headers: {
-          "ContentType" : "application/json",
-          "Authorization" : `bearer ${token}`
-        }
-      })
-      if (!request.ok) { navigate('/') }
-    }
-  })
+  async function validateUser() {
+    const request = await fetch("http://localhost:5000/", {
+      method: "GET",
+      headers: {
+        "ContentType" : "application/json"
+      }
+    })
+    if (!request.ok) { navigate('/') }
+  }
 }
 
 export default ValidateUser;
