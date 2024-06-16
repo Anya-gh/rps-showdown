@@ -276,8 +276,9 @@ public class RouteHandler {
     IBot? LevelBot = botHandler.GetBot(levelID);
     if (LevelBot == null) { return Results.NotFound(); }
     
-    string PlayerChoice = PlayerBot.Play(playerMatches);
-    string LevelChoice = LevelBot.Play(levelMatches);
+    // Needs to be the wrong way round because each bot thinks their playing against the player.
+    string PlayerChoice = PlayerBot.Play(levelMatches);
+    string LevelChoice = LevelBot.Play(playerMatches);
 
     var outcomes = new Dictionary<(string, string), string>() {
       {("rock", "rock"), "draw"},
@@ -296,9 +297,6 @@ public class RouteHandler {
 
     string levelOutcome = outcomes[(LevelChoice, PlayerChoice)];
     Match levelMatch = new Match { PlayerChoice = LevelChoice, BotChoice = PlayerChoice, Result = levelOutcome, PlayerID = levelID, LevelID = playerID, SessionID = request.SessionID, UserID = userID };
-
-    Console.WriteLine("{0}: {1}", levelID, levelMatches.Last().Result);
-    Console.WriteLine("{0}: {1}", playerID, playerMatches.Last().Result);
 
     db.MatchItems.Add(playerMatch);
     db.MatchItems.Add(levelMatch);
