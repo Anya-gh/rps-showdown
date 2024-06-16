@@ -33,6 +33,11 @@ namespace backend.Migrations
                     b.HasData(
                         new
                         {
+                            ID = -1,
+                            Name = "Player"
+                        },
+                        new
+                        {
                             ID = 1,
                             Name = "Beginner"
                         },
@@ -65,6 +70,9 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<int>("PlayerID")
+                        .HasColumnType("INTEGER");
+
                     b.Property<string>("Result")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -78,6 +86,8 @@ namespace backend.Migrations
                     b.HasKey("ID");
 
                     b.HasIndex("LevelID");
+
+                    b.HasIndex("PlayerID");
 
                     b.HasIndex("SessionID");
 
@@ -132,8 +142,14 @@ namespace backend.Migrations
             modelBuilder.Entity("Match", b =>
                 {
                     b.HasOne("Level", "Level")
-                        .WithMany("Matches")
+                        .WithMany("PlayerMatches")
                         .HasForeignKey("LevelID")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Level", "Player")
+                        .WithMany("LevelMatches")
+                        .HasForeignKey("PlayerID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -150,6 +166,8 @@ namespace backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Level");
+
+                    b.Navigation("Player");
 
                     b.Navigation("Session");
 
@@ -177,7 +195,9 @@ namespace backend.Migrations
 
             modelBuilder.Entity("Level", b =>
                 {
-                    b.Navigation("Matches");
+                    b.Navigation("LevelMatches");
+
+                    b.Navigation("PlayerMatches");
 
                     b.Navigation("Sessions");
                 });

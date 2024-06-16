@@ -27,7 +27,6 @@ public class RouteHandler {
     }
     else {
       // User does not exist, create user
-      List<int> levelIDs = db.LevelItems.Select(levelItem => levelItem.ID).ToList();
       User newUser = new User { Username = user.Username, Password = user.Password };
       db.UserItems.Add(newUser);
       db.SaveChanges();
@@ -52,7 +51,7 @@ public class RouteHandler {
 
     List<Match> matches = (
       from matchItem in db.MatchItems
-      where matchItem.UserID == userID
+      where matchItem.UserID == userID && matchItem.PlayerID == -1
       orderby matchItem.LevelID
       select matchItem
     ).ToList();
@@ -60,6 +59,7 @@ public class RouteHandler {
     List<StatsInfo> statsInfo = new List<StatsInfo>();
 
     foreach (var levelItem in db.LevelItems) {
+      if (levelItem.ID < 0) { continue; }
       int levelID = levelItem.ID;
       List<string> choices = new List<string>() { "rock", "paper", "scissors" };
 
@@ -202,7 +202,7 @@ public class RouteHandler {
 
     List<Match> matches = (
       from matchItem in db.MatchItems
-      where matchItem.SessionID == play.SessionID
+      where matchItem.SessionID == play.SessionID && matchItem.PlayerID == -1
       select matchItem
     ).ToList();
 
@@ -224,7 +224,7 @@ public class RouteHandler {
     };
     string outcome = outcomes[(play.PlayerChoice, BotChoice)];
 
-    Match newMatch = new Match { PlayerChoice = play.PlayerChoice, BotChoice = BotChoice, Result = outcome, LevelID = levelID, SessionID = play.SessionID, UserID = userID };
+    Match newMatch = new Match { PlayerChoice = play.PlayerChoice, BotChoice = BotChoice, Result = outcome, PlayerID = -1, LevelID = levelID, SessionID = play.SessionID, UserID = userID };
     db.MatchItems.Add(newMatch);
     db.SaveChanges();
 

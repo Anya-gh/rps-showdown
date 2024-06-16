@@ -76,6 +76,7 @@ namespace backend.Migrations
                     PlayerChoice = table.Column<string>(type: "TEXT", nullable: false),
                     BotChoice = table.Column<string>(type: "TEXT", nullable: false),
                     Result = table.Column<string>(type: "TEXT", nullable: false),
+                    PlayerID = table.Column<int>(type: "INTEGER", nullable: false),
                     LevelID = table.Column<int>(type: "INTEGER", nullable: false),
                     UserID = table.Column<int>(type: "INTEGER", nullable: false),
                     SessionID = table.Column<int>(type: "INTEGER", nullable: false)
@@ -86,6 +87,12 @@ namespace backend.Migrations
                     table.ForeignKey(
                         name: "FK_MatchItems_LevelItems_LevelID",
                         column: x => x.LevelID,
+                        principalTable: "LevelItems",
+                        principalColumn: "ID",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_MatchItems_LevelItems_PlayerID",
+                        column: x => x.PlayerID,
                         principalTable: "LevelItems",
                         principalColumn: "ID",
                         onDelete: ReferentialAction.Cascade);
@@ -108,6 +115,7 @@ namespace backend.Migrations
                 columns: new[] { "ID", "Name" },
                 values: new object[,]
                 {
+                    { -1, "Player" },
                     { 1, "Beginner" },
                     { 2, "Intermediate" },
                     { 3, "Advanced" }
@@ -117,6 +125,11 @@ namespace backend.Migrations
                 name: "IX_MatchItems_LevelID",
                 table: "MatchItems",
                 column: "LevelID");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_MatchItems_PlayerID",
+                table: "MatchItems",
+                column: "PlayerID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MatchItems_SessionID",
