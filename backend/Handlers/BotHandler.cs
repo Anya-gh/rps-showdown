@@ -128,14 +128,6 @@ public class AdvancedBot : IBot {
         }
       }
 
-      foreach (string prevChoice in Choices) {
-        Console.WriteLine("{0} total: {1}", prevChoice, totalCounts[prevChoice]);
-        foreach (string nextChoice in Choices) {
-          Console.WriteLine("{0}->{1} count : {2}", prevChoice, nextChoice, transCounts[prevChoice][nextChoice]);
-          Console.WriteLine("{0}->{1} prob : {2}", prevChoice, nextChoice, transMatrix[prevChoice][nextChoice]);
-        }
-      }
-
       Match lastMatch = matches.Last();
       var choicesByProbability = transMatrix[lastMatch.PlayerChoice];
 
