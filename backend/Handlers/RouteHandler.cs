@@ -35,7 +35,7 @@ public class RouteHandler {
     }
   }
 
-  public IResult Stats(UserDetails user, RPSDbContext db) {
+  public IResult Stats(StatsDetails user, RPSDbContext db) {
 
     ChoiceDistribution ChoiceDistribution(float rock, float paper, float scissors) {
       var total = Math.Max(rock + paper + scissors, 1);
