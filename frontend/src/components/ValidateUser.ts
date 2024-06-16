@@ -15,7 +15,11 @@ function ValidateUser(navigate: NavigateFunction) {
         "Authorization" : `bearer ${token}`
       }
     })
-    if (!request.ok) { navigate('/') }
+    if (!request.ok) {
+      localStorage.removeItem("token")
+      localStorage.removeItem("username")
+      navigate('/') 
+    }
   }
 }
 
