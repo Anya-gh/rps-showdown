@@ -11,3 +11,14 @@ export type StatsType = {
   style: string,
   levelID: number
 }
+
+export type PlayType = {
+  botChoice: string,
+  result: string
+}
+
+export type SpectateType = {
+  playerChoice: string,
+  levelChoice: string,
+  result: string
+}
