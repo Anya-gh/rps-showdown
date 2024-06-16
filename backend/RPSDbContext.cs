@@ -15,8 +15,6 @@ public class RPSDbContext : DbContext {
         });
 
         modelBuilder.Entity<Match>(entity => {
-          entity.HasOne(m => m.Level).WithMany(l => l.PlayerMatches).HasForeignKey(m => m.LevelID);
-          entity.HasOne(m => m.Player).WithMany(l => l.LevelMatches).HasForeignKey(m => m.PlayerID);
           entity.HasOne(m => m.Session).WithMany(s => s.Matches).HasForeignKey(m => m.SessionID);
         });
         modelBuilder.Entity<Level>().HasData(

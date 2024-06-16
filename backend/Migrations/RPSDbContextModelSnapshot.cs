@@ -63,15 +63,9 @@ namespace backend.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("LevelID")
-                        .HasColumnType("INTEGER");
-
                     b.Property<string>("PlayerChoice")
                         .IsRequired()
                         .HasColumnType("TEXT");
-
-                    b.Property<int>("PlayerID")
-                        .HasColumnType("INTEGER");
 
                     b.Property<string>("Result")
                         .IsRequired()
@@ -84,10 +78,6 @@ namespace backend.Migrations
                         .HasColumnType("INTEGER");
 
                     b.HasKey("ID");
-
-                    b.HasIndex("LevelID");
-
-                    b.HasIndex("PlayerID");
 
                     b.HasIndex("SessionID");
 
@@ -146,18 +136,6 @@ namespace backend.Migrations
 
             modelBuilder.Entity("Match", b =>
                 {
-                    b.HasOne("Level", "Level")
-                        .WithMany("PlayerMatches")
-                        .HasForeignKey("LevelID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Level", "Player")
-                        .WithMany("LevelMatches")
-                        .HasForeignKey("PlayerID")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Session", "Session")
                         .WithMany("Matches")
                         .HasForeignKey("SessionID")
@@ -169,10 +147,6 @@ namespace backend.Migrations
                         .HasForeignKey("UserID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Level");
-
-                    b.Navigation("Player");
 
                     b.Navigation("Session");
 
@@ -208,11 +182,7 @@ namespace backend.Migrations
 
             modelBuilder.Entity("Level", b =>
                 {
-                    b.Navigation("LevelMatches");
-
                     b.Navigation("LevelSessions");
-
-                    b.Navigation("PlayerMatches");
 
                     b.Navigation("PlayerSessions");
                 });

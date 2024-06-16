@@ -83,26 +83,12 @@ namespace backend.Migrations
                     PlayerChoice = table.Column<string>(type: "TEXT", nullable: false),
                     BotChoice = table.Column<string>(type: "TEXT", nullable: false),
                     Result = table.Column<string>(type: "TEXT", nullable: false),
-                    PlayerID = table.Column<int>(type: "INTEGER", nullable: false),
-                    LevelID = table.Column<int>(type: "INTEGER", nullable: false),
                     UserID = table.Column<int>(type: "INTEGER", nullable: false),
                     SessionID = table.Column<int>(type: "INTEGER", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_MatchItems", x => x.ID);
-                    table.ForeignKey(
-                        name: "FK_MatchItems_LevelItems_LevelID",
-                        column: x => x.LevelID,
-                        principalTable: "LevelItems",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MatchItems_LevelItems_PlayerID",
-                        column: x => x.PlayerID,
-                        principalTable: "LevelItems",
-                        principalColumn: "ID",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_MatchItems_SessionItems_SessionID",
                         column: x => x.SessionID,
@@ -127,16 +113,6 @@ namespace backend.Migrations
                     { 2, "Intermediate" },
                     { 3, "Advanced" }
                 });
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MatchItems_LevelID",
-                table: "MatchItems",
-                column: "LevelID");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MatchItems_PlayerID",
-                table: "MatchItems",
-                column: "PlayerID");
 
             migrationBuilder.CreateIndex(
                 name: "IX_MatchItems_SessionID",

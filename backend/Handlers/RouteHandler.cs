@@ -51,8 +51,9 @@ public class RouteHandler {
 
     List<Match> matches = (
       from matchItem in db.MatchItems
-      where matchItem.UserID == userID && matchItem.PlayerID == -1
-      orderby matchItem.LevelID
+      join sessionItem in db.SessionItems on matchItem.SessionID equals sessionItem.ID
+      where matchItem.UserID == userID && sessionItem.PlayerID == -1
+      orderby sessionItem.LevelID
       select matchItem
     ).ToList();
 
@@ -63,9 +64,16 @@ public class RouteHandler {
       int levelID = levelItem.ID;
       List<string> choices = new List<string>() { "rock", "paper", "scissors" };
 
-      List<MatchesWithChoice> matchesWithChoice = choices.Select(choice => new MatchesWithChoice(choice, (
+      List<Match> currentLevelMatches = (
         from match in matches
-        where match.LevelID == levelID && match.PlayerChoice == choice
+        join sessionItem in db.SessionItems on match.SessionID equals sessionItem.ID
+        where sessionItem.LevelID == levelID
+        select match
+      ).ToList();
+
+      List<MatchesWithChoice> matchesWithChoice = choices.Select(choice => new MatchesWithChoice(choice, (
+        from match in currentLevelMatches
+        where match.PlayerChoice == choice
         select match
       ).ToList())).ToList();
 
@@ -85,8 +93,8 @@ public class RouteHandler {
       );
 
       var winningMatchesWithChoice = choices.Select(choice => new MatchesWithChoice(choice, (
-        from match in matches
-        where match.LevelID == levelID && match.PlayerChoice == choice && match.Result == "win"
+        from match in currentLevelMatches
+        where match.PlayerChoice == choice && match.Result == "win"
         select match
       ).ToList())).ToList();
 
@@ -107,8 +115,8 @@ public class RouteHandler {
       if (aceChoiceStat != null && aceChoiceStat.Stat != 0) { ace = aceChoiceStat.Choice; }
 
       var losingMatchesAgainstChoice = choices.Select(choice => new MatchesWithChoice(choice, (
-        from match in matches
-        where match.LevelID == levelID && match.BotChoice == choice && match.Result == "lose"
+        from match in currentLevelMatches
+        where match.BotChoice == choice && match.Result == "lose"
         select match
       ).ToList())).ToList();
 
@@ -126,7 +134,7 @@ public class RouteHandler {
 
       /* --- longest streak --- */
 
-      var sequentialMatches = matches.Where(match => match.LevelID == levelID).OrderBy(match => match.ID)
+      var sequentialMatches = currentLevelMatches.OrderBy(match => match.ID)
       .Select((match, index) => new SequentialMatch {
         SessionID = match.SessionID,
         MatchNumber = index + 1,
@@ -201,9 +209,11 @@ public class RouteHandler {
     ).FirstOrDefault();
     if (levelID < 1) { return Results.NotFound("Bot level not found."); }
 
+    // don't really need playerID == -1 because the session is correct
+
     List<Match> matches = (
       from matchItem in db.MatchItems
-      where matchItem.SessionID == play.SessionID && matchItem.PlayerID == -1
+      where matchItem.SessionID == play.SessionID
       select matchItem
     ).ToList();
 
@@ -225,7 +235,7 @@ public class RouteHandler {
     };
     string outcome = outcomes[(play.PlayerChoice, BotChoice)];
 
-    Match newMatch = new Match { PlayerChoice = play.PlayerChoice, BotChoice = BotChoice, Result = outcome, PlayerID = -1, LevelID = levelID, SessionID = play.SessionID, UserID = userID };
+    Match newMatch = new Match { PlayerChoice = play.PlayerChoice, BotChoice = BotChoice, Result = outcome, SessionID = play.SessionID, UserID = userID };
     db.MatchItems.Add(newMatch);
     db.SaveChanges();
 
@@ -260,15 +270,21 @@ public class RouteHandler {
 
     List<Match> playerMatches = (
       from matchItem in db.MatchItems
-      where matchItem.SessionID == request.SessionID && matchItem.PlayerID == playerID
+      where matchItem.SessionID == request.SessionID
       select matchItem
     ).ToList();
 
-    List<Match> levelMatches = (
-      from matchItem in db.MatchItems
-      where matchItem.SessionID == request.SessionID && matchItem.PlayerID == levelID
-      select matchItem
-    ).ToList();
+
+    string FlipResult(string result) {
+      if (result == "win") { return "lose"; }
+      else if (result == "lose" ) { return "win"; }
+      else { return "draw"; }
+    }
+
+    // Flip PlayerChoice and BotChoice to make it look like the other bot is the opponent
+    List<Match> levelMatches = playerMatches.Select(matchItem => new Match { 
+      ID = matchItem.ID, SessionID = matchItem.ID, UserID = matchItem.UserID, BotChoice = matchItem.PlayerChoice, PlayerChoice = matchItem.BotChoice, Result = FlipResult(matchItem.Result)
+    }).ToList();
 
     BotHandler botHandler = new BotHandler();
     IBot? PlayerBot = botHandler.GetBot(playerID);
@@ -293,13 +309,13 @@ public class RouteHandler {
     };
 
     string playerOutcome = outcomes[(PlayerChoice, LevelChoice)];
-    Match playerMatch = new Match { PlayerChoice = PlayerChoice, BotChoice = LevelChoice, Result = playerOutcome, PlayerID = playerID, LevelID = levelID, SessionID = request.SessionID, UserID = userID };
+    Match playerMatch = new Match { PlayerChoice = PlayerChoice, BotChoice = LevelChoice, Result = playerOutcome, SessionID = request.SessionID, UserID = userID };
 
-    string levelOutcome = outcomes[(LevelChoice, PlayerChoice)];
-    Match levelMatch = new Match { PlayerChoice = LevelChoice, BotChoice = PlayerChoice, Result = levelOutcome, PlayerID = levelID, LevelID = playerID, SessionID = request.SessionID, UserID = userID };
+    //string levelOutcome = outcomes[(LevelChoice, PlayerChoice)];
+    //Match levelMatch = new Match { PlayerChoice = LevelChoice, BotChoice = PlayerChoice, Result = levelOutcome, PlayerID = levelID, LevelID = playerID, SessionID = request.SessionID, UserID = userID };
 
     db.MatchItems.Add(playerMatch);
-    db.MatchItems.Add(levelMatch);
+    //db.MatchItems.Add(levelMatch);
     db.SaveChanges();
 
     SpectateResponse response = new SpectateResponse { PlayerChoice = PlayerChoice, LevelChoice = LevelChoice, Result = playerOutcome };
