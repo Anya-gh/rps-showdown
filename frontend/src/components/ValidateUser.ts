@@ -8,7 +8,7 @@ function ValidateUser(navigate: NavigateFunction) {
   else { navigate('/') }
 
   async function validateUser() {
-    const request = await fetch("http://localhost:5000/", {
+    const request = await fetch("http://localhost:5000/validate", {
       method: "GET",
       headers: {
         "ContentType" : "application/json"
