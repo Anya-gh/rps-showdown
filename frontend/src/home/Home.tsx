@@ -6,7 +6,14 @@ TODO:
 - login functionality
 */
 
-export default function Home() {
+type HomeProps = {
+  username: string,
+  setUsername: Dispatch<SetStateAction<string>>,
+  password: string,
+  setPassword: Dispatch<SetStateAction<string>>
+}
+
+export default function Home({ username, setUsername, password, setPassword } : HomeProps) {
 
   const [loggedIn, setLoggedIn] = useState(false)
 
@@ -43,7 +50,7 @@ function LoginForm({ setLoggedIn } : LoginFormProps) {
   }
 
   const handleSubmit = async () => {
-    const request = await fetch(`http://localhost:5000/access`, {
+    const request = await fetch("http://localhost:5000/access", {
       method: "POST",
       headers: { "Content-Type" : "application/json" },
       body: JSON.stringify({"Username" : username, "Password" : password})
@@ -53,7 +60,9 @@ function LoginForm({ setLoggedIn } : LoginFormProps) {
     }
     else {
       const response = await request.json() as string
+      console.log(response);
       localStorage.setItem("token", response);
+      localStorage.setItem("username", username)
     }
     setLoggedIn(true)
     // fetch post
@@ -99,6 +108,7 @@ function PlayOrStats({ setLoggedIn } : PlayOrStatsProps) {
   const signOutHandler = () => {
     setLoggedIn(false);
     localStorage.removeItem("token")
+    localStorage.removeItem("username")
   }
 
   return (
