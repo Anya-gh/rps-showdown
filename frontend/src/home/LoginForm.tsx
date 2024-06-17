@@ -45,9 +45,9 @@ function LoginForm({ setLoggedIn } : LoginFormProps) {
 
   return (
     <div className="flex flex-col items-center my-5 w-full">
-      <span className="flex flex-row items-center justify-evenly w-3/4 mb-5 text-black">
-        <input onChange={(e) => {handleInputChange(e, setUsername)}} className="w-28 rounded-xl p-1 text-sm" placeholder="Username..." />
-        <input type="password" onChange={(e) => {handleInputChange(e, setPassword)}} className="w-28 rounded-xl p-1 text-sm" placeholder="Password..." />
+      <span className="flex flex-row items-center justify-evenly w-3/4 mb-5 md:w-1/4 text-black">
+        <input onChange={(e) => {handleInputChange(e, setUsername)}} className="w-28 md:w-36 rounded-xl p-1 text-sm" placeholder="Username..." />
+        <input type="password" onChange={(e) => {handleInputChange(e, setPassword)}} className="w-28 md:w-36 rounded-xl p-1 text-sm" placeholder="Password..." />
       </span>
       <button onClick={handleSubmit} className="py-1 px-3 rounded-xl bg-blue-600 text-xs mb-2 md:hover:scale-105 transition duration-200">Login / Register</button>
       <p className="italic text-xs text-center font-thin text-zinc-400 w-1/2 mb-2">Don't have an account? Enter a username and password to get started!</p>
