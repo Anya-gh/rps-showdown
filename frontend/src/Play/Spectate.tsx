@@ -40,7 +40,7 @@ function Spectate({ level, setWins, setDraws, setLosses, setPlayResponse, setCho
     if (response.result == "win") { setWins(wins => wins+1) }
     else if (response.result == "draw") { setDraws(draws => draws+1) }
     else if (response.result == "lose") { setLosses(losses => losses+1) }
-    setPlayResponse({botChoice: response.levelChoice, result: response.result})
+    setPlayResponse({levelChoice: response.levelChoice, result: response.result})
     setChoice(response.playerChoice)
   }
 

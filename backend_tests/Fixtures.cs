@@ -66,21 +66,21 @@ public class DatabaseFixture {
         MockContext.Setup(m => m.SessionItems).Returns(mockSessionSet);
 
         var matchData = new List<Match>{
-            new Match { ID = 1, UserID = 1, SessionID = 1, PlayerChoice = "rock", BotChoice = "scissors", Result = "win" },
-            new Match { ID = 2, UserID = 1, SessionID = 1, PlayerChoice = "rock", BotChoice = "scissors", Result = "win" },
-            new Match { ID = 3, UserID = 1, SessionID = 1, PlayerChoice = "rock", BotChoice = "scissors", Result = "win" },
-            new Match { ID = 4, UserID = 1, SessionID = 1, PlayerChoice = "scissors", BotChoice = "rock", Result = "lose" },
+            new Match { ID = 1, UserID = 1, SessionID = 1, PlayerChoice = "rock", LevelChoice = "scissors", Result = "win" },
+            new Match { ID = 2, UserID = 1, SessionID = 1, PlayerChoice = "rock", LevelChoice = "scissors", Result = "win" },
+            new Match { ID = 3, UserID = 1, SessionID = 1, PlayerChoice = "rock", LevelChoice = "scissors", Result = "win" },
+            new Match { ID = 4, UserID = 1, SessionID = 1, PlayerChoice = "scissors", LevelChoice = "rock", Result = "lose" },
 
-            new Match { ID = 5, UserID = 1, SessionID = 2, PlayerChoice = "rock", BotChoice = "scissors", Result = "win" },
-            new Match { ID = 6, UserID = 1, SessionID = 2, PlayerChoice = "paper", BotChoice = "paper", Result = "draw" },
-            new Match { ID = 7, UserID = 1, SessionID = 2, PlayerChoice = "scissors", BotChoice = "rock", Result = "lose" },
+            new Match { ID = 5, UserID = 1, SessionID = 2, PlayerChoice = "rock", LevelChoice = "scissors", Result = "win" },
+            new Match { ID = 6, UserID = 1, SessionID = 2, PlayerChoice = "paper", LevelChoice = "paper", Result = "draw" },
+            new Match { ID = 7, UserID = 1, SessionID = 2, PlayerChoice = "scissors", LevelChoice = "rock", Result = "lose" },
 
-            new Match { ID = 8, UserID = 1, SessionID = 3, PlayerChoice = "rock", BotChoice = "paper", Result = "lose" },
-            new Match { ID = 9, UserID = 1, SessionID = 3, PlayerChoice = "scissors", BotChoice = "paper", Result = "win" },
-            new Match { ID = 10, UserID = 1, SessionID = 3, PlayerChoice = "rock", BotChoice = "paper", Result = "lose" },
-            new Match { ID = 11, UserID = 1, SessionID = 3, PlayerChoice = "scissors", BotChoice = "paper", Result = "win" },
+            new Match { ID = 8, UserID = 1, SessionID = 3, PlayerChoice = "rock", LevelChoice = "paper", Result = "lose" },
+            new Match { ID = 9, UserID = 1, SessionID = 3, PlayerChoice = "scissors", LevelChoice = "paper", Result = "win" },
+            new Match { ID = 10, UserID = 1, SessionID = 3, PlayerChoice = "rock", LevelChoice = "paper", Result = "lose" },
+            new Match { ID = 11, UserID = 1, SessionID = 3, PlayerChoice = "scissors", LevelChoice = "paper", Result = "win" },
 
-            new Match { ID = 12, UserID = 2, SessionID = 4, PlayerChoice = "rock", BotChoice = "scissors", Result = "win" }
+            new Match { ID = 12, UserID = 2, SessionID = 4, PlayerChoice = "rock", LevelChoice = "scissors", Result = "win" }
         };
         var mockMatchSet = CreateMockSet(matchData);
 

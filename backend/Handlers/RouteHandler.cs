@@ -112,7 +112,7 @@ public class RouteHandler {
 
       var losingMatchesAgainstChoice = choices.Select(choice => new MatchesWithChoice { Choice = choice, Matches = (
         from match in currentLevelMatches
-        where match.BotChoice == choice && match.Result == "lose"
+        where match.LevelChoice == choice && match.Result == "lose"
         select match
       ).ToList() }).ToList();
 
@@ -174,25 +174,34 @@ public class RouteHandler {
 
   public IResult CreateSession(SessionRequest session, RPSDbContext db) {
     if (session.PlayerID == session.LevelID) { return Results.BadRequest("The two players in one session cannot be the same."); }
+    
     int userID = (
       from userItem in db.UserItems
       where userItem.Username == session.Username
       select userItem.ID
     ).FirstOrDefault();
-    if (userID < 1) { return Results.NotFound(); }
+    if (userID == 0) { return Results.NotFound(); }
+
+    int levelID = (
+      from levelItem in db.LevelItems
+      where levelItem.ID == session.LevelID
+      select levelItem.ID
+    ).FirstOrDefault();
+    if (levelID == 0) { return Results.BadRequest("This level does not exist."); }
+
+    int playerID = (
+      from levelItem in db.LevelItems
+      where levelItem.ID == session.PlayerID
+      select levelItem.ID
+    ).FirstOrDefault();
+    if (playerID == 0) { return Results.BadRequest("This level does not exist."); }
+
     DateTime startedAt = DateTime.UtcNow;
     Session newSession = new Session { UserID = userID, StartedAt = startedAt, PlayerID = session.PlayerID, LevelID = session.LevelID };
-    try { 
-      db.SessionItems.Add(newSession);
-      db.SaveChanges();
-      int sessionID = db.SessionItems.Where(session => session.UserID == userID && session.StartedAt == startedAt).Select(session => session.ID).FirstOrDefault();
-      return Results.Ok(sessionID);
-    }
-    catch (Exception ex) {
-      // There should be a separate catch for the case of not found levelID but this is fine for now/for these purposes
-      Console.WriteLine(ex.Message);
-      return Results.StatusCode(500);
-    }
+    db.SessionItems.Add(newSession);
+    db.SaveChanges();
+    int sessionID = db.SessionItems.Where(session => session.UserID == userID && session.StartedAt == startedAt).Select(session => session.ID).FirstOrDefault();
+    return Results.Ok(sessionID);
   }
 
   public IResult Play(PlayRequest play, RPSDbContext db) {
@@ -215,8 +224,6 @@ public class RouteHandler {
     ).FirstOrDefault();
     if (levelID < 1) { return Results.NotFound("Bot level not found."); }
 
-    // don't really need playerID == -1 because the session is correct
-
     List<Match> matches = (
       from matchItem in db.MatchItems
       where matchItem.SessionID == play.SessionID
@@ -227,25 +234,15 @@ public class RouteHandler {
     IBot? Bot = botHandler.GetBot(levelID);
     if (Bot == null) { return Results.StatusCode(500); }
 
-    string BotChoice = Bot.Play(matches);
-    var outcomes = new Dictionary<(string, string), string>() {
-      {("rock", "rock"), "draw"},
-      {("rock", "paper"), "lose"},
-      {("rock", "scissors"), "win"},
-      {("paper", "rock"), "win"},
-      {("paper", "paper"), "draw"},
-      {("paper", "scissors"), "lose"},
-      {("scissors", "rock"), "lose"},
-      {("scissors", "paper"), "win"},
-      {("scissors", "scissors"), "draw"}
-    };
-    string outcome = outcomes[(play.PlayerChoice, BotChoice)];
+    string LevelChoice = Bot.Play(matches);
 
-    Match newMatch = new Match { PlayerChoice = play.PlayerChoice, BotChoice = BotChoice, Result = outcome, SessionID = play.SessionID, UserID = userID };
+    string outcome = botHandler.DetermineResult(play.PlayerChoice, LevelChoice);
+
+    Match newMatch = new Match { PlayerChoice = play.PlayerChoice, LevelChoice = LevelChoice, Result = outcome, SessionID = play.SessionID, UserID = userID };
     db.MatchItems.Add(newMatch);
     db.SaveChanges();
 
-    PlayResponse playResponse = new PlayResponse { BotChoice = BotChoice, Result = outcome };
+    PlayResponse playResponse = new PlayResponse { LevelChoice = LevelChoice, Result = outcome };
     return Results.Ok(playResponse);
   }
 
@@ -287,9 +284,9 @@ public class RouteHandler {
       else { return "draw"; }
     }
 
-    // Flip PlayerChoice and BotChoice to make it look like the other bot is the opponent
+    // Flip PlayerChoice and LevelChoice to make it look like the other bot is the opponent
     List<Match> levelMatches = playerMatches.Select(matchItem => new Match { 
-      ID = matchItem.ID, SessionID = matchItem.ID, UserID = matchItem.UserID, BotChoice = matchItem.PlayerChoice, PlayerChoice = matchItem.BotChoice, Result = FlipResult(matchItem.Result)
+      ID = matchItem.ID, SessionID = matchItem.ID, UserID = matchItem.UserID, LevelChoice = matchItem.PlayerChoice, PlayerChoice = matchItem.LevelChoice, Result = FlipResult(matchItem.Result)
     }).ToList();
 
     BotHandler botHandler = new BotHandler();
@@ -298,30 +295,14 @@ public class RouteHandler {
     IBot? LevelBot = botHandler.GetBot(levelID);
     if (LevelBot == null) { return Results.NotFound(); }
     
-    // Needs to be the wrong way round because each bot thinks their playing against the player.
+    // Needs to be the wrong way round because each bot thinks they're playing against the player.
     string PlayerChoice = PlayerBot.Play(levelMatches);
     string LevelChoice = LevelBot.Play(playerMatches);
 
-    var outcomes = new Dictionary<(string, string), string>() {
-      {("rock", "rock"), "draw"},
-      {("rock", "paper"), "lose"},
-      {("rock", "scissors"), "win"},
-      {("paper", "rock"), "win"},
-      {("paper", "paper"), "draw"},
-      {("paper", "scissors"), "lose"},
-      {("scissors", "rock"), "lose"},
-      {("scissors", "paper"), "win"},
-      {("scissors", "scissors"), "draw"}
-    };
-
-    string playerOutcome = outcomes[(PlayerChoice, LevelChoice)];
-    Match playerMatch = new Match { PlayerChoice = PlayerChoice, BotChoice = LevelChoice, Result = playerOutcome, SessionID = request.SessionID, UserID = userID };
-
-    //string levelOutcome = outcomes[(LevelChoice, PlayerChoice)];
-    //Match levelMatch = new Match { PlayerChoice = LevelChoice, BotChoice = PlayerChoice, Result = levelOutcome, PlayerID = levelID, LevelID = playerID, SessionID = request.SessionID, UserID = userID };
+    string playerOutcome = botHandler.DetermineResult(PlayerChoice, LevelChoice);
+    Match playerMatch = new Match { PlayerChoice = PlayerChoice, LevelChoice = LevelChoice, Result = playerOutcome, SessionID = request.SessionID, UserID = userID };
 
     db.MatchItems.Add(playerMatch);
-    //db.MatchItems.Add(levelMatch);
     db.SaveChanges();
 
     SpectateResponse response = new SpectateResponse { PlayerChoice = PlayerChoice, LevelChoice = LevelChoice, Result = playerOutcome };

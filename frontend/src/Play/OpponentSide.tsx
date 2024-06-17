@@ -30,7 +30,7 @@ function OpponentSide({ showLevels, setShowLevels, level, chosenPlayer, handleSe
           </div>
         }
       </div>
-      <Choice choice={playResponse?.botChoice} />
+      <Choice choice={playResponse?.levelChoice} />
     </div>
   )
 }

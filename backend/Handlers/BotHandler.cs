@@ -20,6 +20,22 @@ public class BotHandler {
         return null;
     }
   }
+
+  public string DetermineResult(string playerChoice, string levelChoice) { 
+    var outcomes = new Dictionary<(string, string), string>() {
+      {("rock", "rock"), "draw"},
+      {("rock", "paper"), "lose"},
+      {("rock", "scissors"), "win"},
+      {("paper", "rock"), "win"},
+      {("paper", "paper"), "draw"},
+      {("paper", "scissors"), "lose"},
+      {("scissors", "rock"), "lose"},
+      {("scissors", "paper"), "win"},
+      {("scissors", "scissors"), "draw"}
+    };
+
+    return outcomes[(playerChoice, levelChoice)];
+  }
 }
 
 public abstract class IBot {
@@ -42,7 +58,7 @@ public class BeginnerBot : IBot {
     var lastMatch = matches.LastOrDefault();
     if (lastMatch != null) {
       if (lastMatch.Result == "win") { return lastMatch.PlayerChoice; }
-      else { return lastMatch.BotChoice; }
+      else { return lastMatch.LevelChoice; }
     }
     else {
       return Choices[random.Next(0, 2)];

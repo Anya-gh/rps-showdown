@@ -59,7 +59,7 @@ namespace backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("BotChoice")
+                    b.Property<string>("LevelChoice")
                         .IsRequired()
                         .HasColumnType("TEXT");
 

@@ -17,7 +17,7 @@ export type StatsType = {
 }
 
 export type PlayType = {
-  botChoice: string,
+  levelChoice: string,
   result: string
 }
 

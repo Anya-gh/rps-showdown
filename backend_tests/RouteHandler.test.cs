@@ -3,9 +3,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace backend_tests;
-/*
-These tests aren't comprehensive: they're just demonstrating my understanding of unit tests. 
-*/
+
 public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<RouteHandlerFixture>
 {
     DatabaseFixture DbFixture;
@@ -70,9 +68,10 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
 
         StatsResponse beginnerStats = new StatsResponse { WinRate = (float) 3/4, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 3/4, Paper = 0.0f, Scissors = (float) 1/4}, LevelID = 1, LongestStreak = 3, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 4 };
 
-        StatsResponse intermediateStats = new StatsResponse { WinRate = (float) 1/3, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 1/3, Paper = (float) 1/3, Scissors = (float) 1/3 }, LevelID = 2, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 3 };
+        StatsResponse intermediateStats = new StatsResponse { WinRate = (float) 1/2, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 1/3, Paper = (float) 1/3, Scissors = (float) 1/3 }, LevelID = 2, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 2 };
 
         StatsResponse advancedStats = new StatsResponse { WinRate = (float) 2/4, Ace = "scissors", Nemesis = "paper", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 2/4, Paper = 0.0f, Scissors = (float) 2/4 }, LevelID = 3, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 4 };
+
         // Act
         var result = RouteFixture.RouteHandler.Stats(user, DbFixture.MockContext.Object);
 
@@ -152,7 +151,7 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
         Assert.NotNull(okResult);
         Assert.NotNull(okResult.Value);
 
-        Assert.Equal("rock", okResult.Value.BotChoice);
+        Assert.Equal("rock", okResult.Value.LevelChoice);
         Assert.Equal("draw", okResult.Value.Result);
 
         // Clean up (passing in null because Remove here just removes the last item from the list but still expect a value)

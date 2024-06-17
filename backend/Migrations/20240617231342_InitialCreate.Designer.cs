@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace backend.Migrations
 {
     [DbContext(typeof(RPSDbContext))]
-    [Migration("20240616195217_InitialCreate")]
+    [Migration("20240617231342_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -62,7 +62,7 @@ namespace backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("BotChoice")
+                    b.Property<string>("LevelChoice")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
