@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 import ValidateUser from "../components/ValidateUser"
 import Modal from "react-modal"
 import { PlayType } from "../Types"
-import ChooseOption from "./Option"
+import ChooseOption from "./ChooseOption"
 import Spectate from "./Spectate"
 import ConfirmChange from "./ConfirmChange"
 import PlayerSide from "./PlayerSide"
@@ -37,7 +37,7 @@ export default function Play() {
   const [showPlayers, setShowPlayers] = useState(false)
   const [chosenPlayer, setChosenPlayer] = useState<number>(player)
   const [modalOpen, setModalOpen] = useState(false)
-  const [error, setError] = useState(false)
+  const [error, setError] = useState<string>()
   const playerNames = ["Player", "Beginner", "Intermediate", "Advanced"]
 
   const handleSetPlayer = (newChosenPlayer: number) => {
@@ -59,6 +59,7 @@ export default function Play() {
   const handleSetLevel = (newChosenLevel: number) => {
     setChosenLevel(newChosenLevel);
     setShowLevels(false);
+    setError(undefined)
     if ((level == undefined) || ((wins == 0 && draws == 0 && losses == 0))) { handleStart(newChosenLevel, chosenPlayer) } 
     else { setModalOpen(true) }
   }
@@ -145,10 +146,10 @@ export default function Play() {
         // Choose option between rock, paper, scissors
         <ChooseOption choice={choice} setChoice={setChoice} setPlayResponse={setPlayResponse} setWins={setWins} setDraws={setDraws} setLosses={setLosses} level={level} setError={setError} />
         :
-        <Spectate level={level} setWins={setWins} setDraws={setDraws} setLosses={setLosses} setPlayResponse={setPlayResponse} setChoice={setChoice} />
+        <Spectate level={level} setWins={setWins} setDraws={setDraws} setLosses={setLosses} setPlayResponse={setPlayResponse} setChoice={setChoice} setError={setError} />
       }
 
-      {error && <p className="text-xs text-red-400">Select a level first!</p>}
+      {error != undefined && <p className="text-xs text-red-400">{error}</p>}
       
       <h1 className={`text-xl tracking-wide font-bold ${playResponse?.result == "win" && "text-green-400"} ${playResponse?.result == "draw" && "text-yellow-400"} ${playResponse?.result == "lose" && "text-red-400"}`}>{playResponse?.result.toUpperCase()} {playResponse != undefined && player != -1 && `(${playerNames[player]})`}</h1> 
 

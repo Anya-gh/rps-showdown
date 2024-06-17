@@ -8,17 +8,21 @@ type SpectateProps = {
   setDraws: Dispatch<SetStateAction<number>>,
   setLosses: Dispatch<SetStateAction<number>>,
   setPlayResponse: Dispatch<SetStateAction<PlayType | undefined>>,
-  setChoice: Dispatch<SetStateAction<string | undefined>>
+  setChoice: Dispatch<SetStateAction<string | undefined>>,
+  setError: Dispatch<SetStateAction<string | undefined>>
 }
 
-function Spectate({ level, setWins, setDraws, setLosses, setPlayResponse, setChoice } : SpectateProps) {
+function Spectate({ level, setWins, setDraws, setLosses, setPlayResponse, setChoice, setError } : SpectateProps) {
 
   const handleSpectate = async () => {
     console.log(JSON.stringify({
       "Username" : localStorage.getItem("username"),
       "SessionID" : localStorage.getItem("session")
     }))
-    if (level == undefined) { return; } // show an error message
+    if (level == undefined) { 
+      setError("Select a level first!")
+      return; 
+    }
     const request = await fetch("http://localhost:5000/spectate", {
       method: "POST",
       headers: {
