@@ -71,6 +71,8 @@ public class RouteHandler {
         select match
       ).ToList();
 
+      int games = currentLevelMatches.Count();
+
       List<MatchesWithChoice> matchesWithChoice = choices.Select(choice => new MatchesWithChoice(choice, (
         from match in currentLevelMatches
         where match.PlayerChoice == choice
@@ -154,7 +156,7 @@ public class RouteHandler {
       StyleHandler styleHandler = new StyleHandler();
       Playstyle playstyle = styleHandler.DetermineStyle(currentLevelMatches);
       
-      StatsInfo levelStatsInfo = new StatsInfo { Ace = ace, Nemesis = nemesis, ChoiceDistribution = choiceDistribution, LevelID = levelID, LongestStreak = longestStreak, Playstyle = playstyle, WinRate = winRate };
+      StatsInfo levelStatsInfo = new StatsInfo { Ace = ace, Nemesis = nemesis, ChoiceDistribution = choiceDistribution, LevelID = levelID, LongestStreak = longestStreak, Playstyle = playstyle, WinRate = winRate, Games = games };
 
       statsInfo.Add(
         levelStatsInfo

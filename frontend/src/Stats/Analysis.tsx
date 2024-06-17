@@ -96,7 +96,7 @@ function Analysis({ userStats } : AnalysisProps) {
             <h1 className={`text-lg font-bold`}>Ace</h1>
             <p className="font-thin italic text-xs">The option you've won the most with</p>
             </span>
-            {userStats.ace != "none" ? <img className="w-20" src={ace} /> : <h1 className="text-3xl font-bold mb-auto">None</h1>}
+            {userStats.ace != "none" ? <img className="w-16" src={ace} /> : <h1 className="text-3xl font-bold mb-auto">None</h1>}
           </span>
         </Card>
         <Card>
@@ -105,7 +105,7 @@ function Analysis({ userStats } : AnalysisProps) {
             <h1 className={`text-lg font-bold mb-1`}>Nemesis</h1>
             <p className="font-thin italic text-xs">The option you've lost the most against</p>
             </span>
-            {userStats.nemesis != "none" ? <img className="w-20" src={nemesis} /> : <h1 className="text-3xl font-bold mb-auto">None</h1>}
+            {userStats.nemesis != "none" ? <img className="w-16" src={nemesis} /> : <h1 className="text-3xl font-bold mb-auto">None</h1>}
           </span>
         </Card>
         <Card>

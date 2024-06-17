@@ -12,6 +12,7 @@ export type StatsType = {
     style: string,
     description: string
   },
+  games: number,
   levelID: number
 }
 

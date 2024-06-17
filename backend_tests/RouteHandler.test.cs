@@ -68,11 +68,11 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
         // Arrange
         StatsDetails user = new StatsDetails { Username = "Anya" };
 
-        StatsInfo beginnerStats = new StatsInfo { WinRate = (float) 3/4, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 3/4, Paper = 0.0f, Scissors = (float) 1/4}, LevelID = 1, LongestStreak = 3, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" } };
+        StatsInfo beginnerStats = new StatsInfo { WinRate = (float) 3/4, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 3/4, Paper = 0.0f, Scissors = (float) 1/4}, LevelID = 1, LongestStreak = 3, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 4 };
 
-        StatsInfo intermediateStats = new StatsInfo { WinRate = (float) 1/3, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 1/3, Paper = (float) 1/3, Scissors = (float) 1/3 }, LevelID = 2, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" } };
+        StatsInfo intermediateStats = new StatsInfo { WinRate = (float) 1/3, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 1/3, Paper = (float) 1/3, Scissors = (float) 1/3 }, LevelID = 2, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 3 };
 
-        StatsInfo advancedStats = new StatsInfo { WinRate = (float) 2/4, Ace = "scissors", Nemesis = "paper", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 2/4, Paper = 0.0f, Scissors = (float) 2/4 }, LevelID = 3, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" } };
+        StatsInfo advancedStats = new StatsInfo { WinRate = (float) 2/4, Ace = "scissors", Nemesis = "paper", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 2/4, Paper = 0.0f, Scissors = (float) 2/4 }, LevelID = 3, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 4 };
         // Act
         var result = RouteFixture.RouteHandler.Stats(user, DbFixture.MockContext.Object);
 

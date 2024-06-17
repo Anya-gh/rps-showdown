@@ -53,8 +53,8 @@ export default function Stats() {
       <Header />
       <Levels level={level} setLevel={setLevel}/>
       <span className='flex flex-row w-3/4 justify-evenly mt-5 md:mb-10'>
-        <button className={`font-bold p-3 bg-[#303030] drop-shadow-xl rounded-xl transition duration-200 md:hover:scale-110 ${showPerformance ? "text-white" : "text-zinc-400"}`} onClick={() => setShowPerformance(true)}>Performance</button>
-        <button className={`font-bold p-3 bg-[#303030] drop-shadow-xl rounded-xl transition duration-200 md:hover:scale-110 ${showPerformance ? "text-zinc-400" : "text-white"}`} onClick={() => setShowPerformance(false)}>Analysis</button>
+        <button className={`font-bold p-3 bg-[#303030] drop-shadow-xl rounded-xl transition duration-200 md:hover:scale-110 ${showPerformance ? "text-white" : "text-zinc-500"}`} onClick={() => setShowPerformance(true)}>Performance</button>
+        <button className={`font-bold p-3 bg-[#303030] drop-shadow-xl rounded-xl transition duration-200 md:hover:scale-110 ${showPerformance ? "text-zinc-500" : "text-white"}`} onClick={() => setShowPerformance(false)}>Analysis</button>
       </span>
       {userStats && (showPerformance ? <Performance userStats={userStats[level]}/> : <Analysis userStats={userStats[level]}/>)}
     </div>

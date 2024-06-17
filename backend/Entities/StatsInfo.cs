@@ -6,6 +6,7 @@ public class StatsInfo {
   public string Ace { get; set; }
   public string Nemesis { get; set; }
   public Playstyle Playstyle { get; set; }
+  public int Games { get; set; }
   public int LevelID { get; set; }
 }
 

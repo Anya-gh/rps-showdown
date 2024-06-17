@@ -17,7 +17,10 @@ function Performance({ userStats } : PerformanceProps) {
             <img className="w-6 h-6 mr-3" src={winRateIcon} />
             <h1 className="text-lg">Win Rate</h1>
           </span>
-          <p className="text-5xl mb-auto">{Math.round(userStats.winRate*100)} %</p>
+          <span className="mb-auto">
+            <p className="text-5xl mb-2">{Math.round(userStats.winRate*100)} %</p>
+            <p className="text-sm italic font-thin text-center">in {userStats.games} games</p>
+          </span>
         </div>
       </Card>
       <Card>
