@@ -1,5 +1,5 @@
 public class WinStreak {
-  public int SessionID { get; set; }
-  public int GroupID { get; set; }
-  public int Streak { get; set; }
+  public required int SessionID { get; set; }
+  public required int GroupID { get; set; }
+  public required int Streak { get; set; }
 }

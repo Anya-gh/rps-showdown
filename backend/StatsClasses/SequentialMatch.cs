@@ -1,5 +1,5 @@
 public class SequentialMatch { 
-  public int SessionID { get; set; }
-  public int MatchNumber { get; set; }
-  public int IsWin { get; set; }
+  public required int SessionID { get; set; }
+  public required int MatchNumber { get; set; }
+  public required int IsWin { get; set; }
 }

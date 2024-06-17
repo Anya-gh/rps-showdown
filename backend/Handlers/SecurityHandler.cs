@@ -3,8 +3,8 @@ using System.Security.Claims;
 using Microsoft.IdentityModel.Tokens;
 
 public interface ISecurityHandler {
-  public bool UserExists(UserDetails user, RPSDbContext db);
-  public bool AuthenticateUser(UserDetails user, RPSDbContext db);
+  public bool UserExists(UserRequest user, RPSDbContext db);
+  public bool AuthenticateUser(UserRequest user, RPSDbContext db);
 }
 
 public class SecurityHandler : ISecurityHandler {
@@ -15,15 +15,15 @@ public class SecurityHandler : ISecurityHandler {
     TokenParams = tokenParams;
   }
 
-  public bool UserExists(UserDetails user, RPSDbContext db) {
+  public bool UserExists(UserRequest user, RPSDbContext db) {
     return db.UserItems.Any(entry => entry.Username == user.Username);
   }
 
-  public bool AuthenticateUser(UserDetails user, RPSDbContext db) {
+  public bool AuthenticateUser(UserRequest user, RPSDbContext db) {
     return db.UserItems.Any(entry => entry.Username == user.Username && entry.Password == user.Password);
   }
 
-  public string CreateToken(UserDetails user) {
+  public string CreateToken(UserRequest user) {
     var tokenDescriptor = new SecurityTokenDescriptor{
       Subject = new ClaimsIdentity(new[]{
         new Claim("Id", Guid.NewGuid().ToString()),

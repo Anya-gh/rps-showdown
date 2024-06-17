@@ -1,5 +1,5 @@
 public class SpectateResponse {
-  public string PlayerChoice { get; set; }
-  public string LevelChoice { get; set; }
-  public string Result { get; set; }
+  public required string PlayerChoice { get; set; }
+  public required string LevelChoice { get; set; }
+  public required string Result { get; set; }
 }

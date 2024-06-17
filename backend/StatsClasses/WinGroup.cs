@@ -1,4 +1,4 @@
 public class WinGroup {
-  public SequentialMatch sequentialMatch { get; set; }
-  public int GroupID { get; set; }
+  public required SequentialMatch sequentialMatch { get; set; }
+  public required int GroupID { get; set; }
 }

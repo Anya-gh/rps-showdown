@@ -18,7 +18,7 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
     [Fact]
     public void Test_Valid_Login() {
         // Arrange
-        UserDetails user = new UserDetails { Username = "Anya", Password = "Password123" };
+        UserRequest user = new UserRequest { Username = "Anya", Password = "Password123" };
 
         // Act
         var result = RouteFixture.RouteHandler.Login(user, DbFixture.MockContext.Object);
@@ -33,7 +33,7 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
     [Fact]
     public void Test_Valid_Register() {
         // Arrange
-        UserDetails user = new UserDetails { Username = "Pedro", Password = "Password789" };
+        UserRequest user = new UserRequest { Username = "Pedro", Password = "Password789" };
         int users = DbFixture.MockContext.Object.UserItems.Count();
 
         // Act
@@ -51,7 +51,7 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
     [Fact]
     public void Test_Invalid_Login() {
         // Arrange
-        UserDetails user = new UserDetails { Username = "Anya", Password = "Password456" };
+        UserRequest user = new UserRequest { Username = "Anya", Password = "Password456" };
 
         // Act
         var result = RouteFixture.RouteHandler.Login(user, DbFixture.MockContext.Object);
@@ -66,13 +66,13 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
     [Fact]
     public void Test_Valid_Stats() {
         // Arrange
-        StatsDetails user = new StatsDetails { Username = "Anya" };
+        StatsRequest user = new StatsRequest { Username = "Anya" };
 
-        StatsInfo beginnerStats = new StatsInfo { WinRate = (float) 3/4, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 3/4, Paper = 0.0f, Scissors = (float) 1/4}, LevelID = 1, LongestStreak = 3, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 4 };
+        StatsResponse beginnerStats = new StatsResponse { WinRate = (float) 3/4, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 3/4, Paper = 0.0f, Scissors = (float) 1/4}, LevelID = 1, LongestStreak = 3, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 4 };
 
-        StatsInfo intermediateStats = new StatsInfo { WinRate = (float) 1/3, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 1/3, Paper = (float) 1/3, Scissors = (float) 1/3 }, LevelID = 2, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 3 };
+        StatsResponse intermediateStats = new StatsResponse { WinRate = (float) 1/3, Ace = "rock", Nemesis = "rock", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 1/3, Paper = (float) 1/3, Scissors = (float) 1/3 }, LevelID = 2, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 3 };
 
-        StatsInfo advancedStats = new StatsInfo { WinRate = (float) 2/4, Ace = "scissors", Nemesis = "paper", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 2/4, Paper = 0.0f, Scissors = (float) 2/4 }, LevelID = 3, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 4 };
+        StatsResponse advancedStats = new StatsResponse { WinRate = (float) 2/4, Ace = "scissors", Nemesis = "paper", ChoiceDistribution = new ChoiceDistribution { Rock = (float) 2/4, Paper = 0.0f, Scissors = (float) 2/4 }, LevelID = 3, LongestStreak = 1, Playstyle = new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" }, Games = 4 };
         // Act
         var result = RouteFixture.RouteHandler.Stats(user, DbFixture.MockContext.Object);
 
@@ -80,10 +80,10 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
 
         // Test that the result is of the correct type and the last has 3 items, one for each level
         Assert.NotNull(result);
-        var okResult = result as Ok<List<StatsInfo>>;
+        var okResult = result as Ok<List<StatsResponse>>;
         Assert.NotNull(okResult);
         Assert.NotNull(okResult.Value);
-        List<StatsInfo> stats = okResult.Value;
+        List<StatsResponse> stats = okResult.Value;
         Assert.Equal(3, stats.Count());
 
         // Using FluentAssertions because we need to compare objects
@@ -101,7 +101,7 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
     [Fact]
     public void Test_NonExistentUser_Cannot_Get_Stats() {
         // Arrange
-        StatsDetails user = new StatsDetails { Username = "asfdasdf" };
+        StatsRequest user = new StatsRequest { Username = "asfdasdf" };
 
         // Act
         var result = RouteFixture.RouteHandler.Stats(user, DbFixture.MockContext.Object);
@@ -113,12 +113,11 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
     [Fact]
     public void Test_Valid_CreateSession() {
         // Arrange
-        SessionDetails sessionDetails = new SessionDetails { LevelID = 1, PlayerID = -1, Username = "Anya" };
+        SessionRequest sessionDetails = new SessionRequest { LevelID = 1, PlayerID = -1, Username = "Anya" };
         int sessions = DbFixture.MockContext.Object.SessionItems.Count();
 
         // Act
         var result = RouteFixture.RouteHandler.CreateSession(sessionDetails, DbFixture.MockContext.Object);
-        Console.WriteLine(result.GetType());
         // Assert
         Assert.NotNull(result);
         Assert.IsType<Ok<int>>(result);
@@ -129,7 +128,7 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
     [Fact]
     public void Test_NonExistentUser_Cannot_CreateSession() {
         // Arrange
-        SessionDetails sessionDetails = new SessionDetails { LevelID = 1, PlayerID = -1, Username = "sfsdfsc" };
+        SessionRequest sessionDetails = new SessionRequest { LevelID = 1, PlayerID = -1, Username = "sfsdfsc" };
         int sessions = DbFixture.MockContext.Object.SessionItems.Count();
 
         // Act
@@ -142,10 +141,10 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
     [Fact]
     public void Test_Valid_Level1_Play() {
         // Arrange
-        PlayDetails playDetails = new PlayDetails { PlayerChoice = "rock", SessionID = 1, Username = "Anya" };
+        PlayRequest PlayRequest = new PlayRequest { PlayerChoice = "rock", SessionID = 1, Username = "Anya" };
 
         // Act
-        var result = RouteFixture.RouteHandler.Play(playDetails, DbFixture.MockContext.Object);
+        var result = RouteFixture.RouteHandler.Play(PlayRequest, DbFixture.MockContext.Object);
 
         // Assert
         Assert.NotNull(result);
@@ -156,17 +155,17 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
         Assert.Equal("rock", okResult.Value.BotChoice);
         Assert.Equal("draw", okResult.Value.Result);
 
-        // Clean up
-        DbFixture.MockContext.Object.MatchItems.Remove(new Match { });
+        // Clean up (passing in null because Remove here just removes the last item from the list but still expect a value)
+        DbFixture.MockContext.Object.MatchItems.Remove(null!);
     }
 
     [Fact]
     public void Test_Invalid_Level1_Play() {
         // Arrange
-        PlayDetails playDetails = new PlayDetails { PlayerChoice = "sdfsfd", SessionID = 1, Username = "Anya" };
+        PlayRequest PlayRequest = new PlayRequest { PlayerChoice = "sdfsfd", SessionID = 1, Username = "Anya" };
 
         // Act
-        var result = RouteFixture.RouteHandler.Play(playDetails, DbFixture.MockContext.Object);
+        var result = RouteFixture.RouteHandler.Play(PlayRequest, DbFixture.MockContext.Object);
 
         // Assert
         Assert.NotNull(result);
@@ -191,8 +190,8 @@ public class RouteHandlerTests : IClassFixture<DatabaseFixture>, IClassFixture<R
         Assert.Equal("paper", okResult.Value.LevelChoice);
         Assert.Equal("lose", okResult.Value.Result);
 
-        // Clean up
-        DbFixture.MockContext.Object.MatchItems.Remove(new Match { });
+        // Clean up (passing in null because Remove here just removes the last item from the list but still expect a value)
+        DbFixture.MockContext.Object.MatchItems.Remove(null!);
     }
 
     [Fact]

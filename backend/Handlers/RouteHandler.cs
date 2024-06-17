@@ -14,7 +14,7 @@ public class RouteHandler {
   public RouteHandler(SecurityHandler securityHandler) {
     SecurityHandler = securityHandler;
   }
-  public IResult Login(UserDetails user, RPSDbContext db) {
+  public IResult Login(UserRequest user, RPSDbContext db) {
     if (SecurityHandler.UserExists(user, db)) {
       if (SecurityHandler.AuthenticateUser(user, db)) {
         // User exists and username password combination is valid
@@ -34,7 +34,7 @@ public class RouteHandler {
     }
   }
 
-  public IResult Stats(StatsDetails user, RPSDbContext db) {
+  public IResult Stats(StatsRequest user, RPSDbContext db) {
 
     ChoiceDistribution ChoiceDistribution(float rock, float paper, float scissors) {
       var total = Math.Max(rock + paper + scissors, 1);
@@ -57,7 +57,7 @@ public class RouteHandler {
       select matchItem
     ).ToList();
 
-    List<StatsInfo> statsInfo = new List<StatsInfo>();
+    List<StatsResponse> statsResponse = new List<StatsResponse>();
 
     foreach (var levelItem in db.LevelItems) {
       if (levelItem.ID < 0) { continue; }
@@ -73,13 +73,13 @@ public class RouteHandler {
 
       int games = currentLevelMatches.Count();
 
-      List<MatchesWithChoice> matchesWithChoice = choices.Select(choice => new MatchesWithChoice(choice, (
+      List<MatchesWithChoice> matchesWithChoice = choices.Select(choice => new MatchesWithChoice{ Choice = choice, Matches = (
         from match in currentLevelMatches
         where match.PlayerChoice == choice
         select match
-      ).ToList())).ToList();
+      ).ToList() }).ToList();
 
-      List<ChoiceStat> timesUsed = matchesWithChoice.Select(choice => new ChoiceStat(choice.Choice, choice.Matches.Count())).ToList();
+      List<ChoiceStat> timesUsed = matchesWithChoice.Select(choice => new ChoiceStat { Choice = choice.Choice, Stat = choice.Matches.Count() }).ToList();
 
       var rockStat = timesUsed.Where(choice => choice.Choice == "rock").FirstOrDefault();
       float rockUsed = rockStat == null ? 0 : rockStat.Stat;
@@ -94,13 +94,13 @@ public class RouteHandler {
         scissorsUsed
       );
 
-      var winningMatchesWithChoice = choices.Select(choice => new MatchesWithChoice(choice, (
+      var winningMatchesWithChoice = choices.Select(choice => new MatchesWithChoice{ Choice = choice, Matches = (
         from match in currentLevelMatches
         where match.PlayerChoice == choice && match.Result == "win"
         select match
-      ).ToList())).ToList();
+      ).ToList() }).ToList();
 
-      List<ChoiceStat> winsWithChoice = winningMatchesWithChoice.Select(choice => new ChoiceStat(choice.Choice, choice.Matches.Count())).ToList();
+      List<ChoiceStat> winsWithChoice = winningMatchesWithChoice.Select(choice => new ChoiceStat { Choice = choice.Choice, Stat = choice.Matches.Count() }).ToList();
 
       float total = timesUsed.Sum(choice => (int)choice.Stat);
       float wins = winsWithChoice.Sum(choice => (int)choice.Stat);
@@ -109,25 +109,25 @@ public class RouteHandler {
       List<ChoiceStat> winRateWithChoice = (
         from winChoice in winsWithChoice
         join totalChoice in timesUsed on winChoice.Choice equals totalChoice.Choice
-        select new ChoiceStat(winChoice.Choice, winChoice.Stat / Math.Max(totalChoice.Stat, 1))
+        select new ChoiceStat { Choice = winChoice.Choice, Stat = winChoice.Stat / Math.Max(totalChoice.Stat, 1) }
       ).ToList();
 
       ChoiceStat? aceChoiceStat = winRateWithChoice.MaxBy(choice => choice.Stat);
       string ace = "none";
       if (aceChoiceStat != null && aceChoiceStat.Stat != 0) { ace = aceChoiceStat.Choice; }
 
-      var losingMatchesAgainstChoice = choices.Select(choice => new MatchesWithChoice(choice, (
+      var losingMatchesAgainstChoice = choices.Select(choice => new MatchesWithChoice { Choice = choice, Matches = (
         from match in currentLevelMatches
         where match.BotChoice == choice && match.Result == "lose"
         select match
-      ).ToList())).ToList();
+      ).ToList() }).ToList();
 
-      List<ChoiceStat> lossesAgainstChoice = losingMatchesAgainstChoice.Select(choice => new ChoiceStat(choice.Choice, choice.Matches.Count())).ToList();
+      List<ChoiceStat> lossesAgainstChoice = losingMatchesAgainstChoice.Select(choice => new ChoiceStat { Choice = choice.Choice, Stat = choice.Matches.Count() }).ToList();
 
       List<ChoiceStat> loseRateAgainstChoice = (
         from winChoice in lossesAgainstChoice
         join totalChoice in timesUsed on winChoice.Choice equals totalChoice.Choice
-        select new ChoiceStat(winChoice.Choice, winChoice.Stat / Math.Max(totalChoice.Stat, 1))
+        select new ChoiceStat{ Choice = winChoice.Choice, Stat =  winChoice.Stat / Math.Max(totalChoice.Stat, 1) }
       ).ToList();
       
       ChoiceStat? nemesisChoiceStat = loseRateAgainstChoice.MaxBy(choice => choice.Stat);
@@ -156,25 +156,25 @@ public class RouteHandler {
       StyleHandler styleHandler = new StyleHandler();
       Playstyle playstyle = styleHandler.DetermineStyle(currentLevelMatches);
       
-      StatsInfo levelStatsInfo = new StatsInfo { Ace = ace, Nemesis = nemesis, ChoiceDistribution = choiceDistribution, LevelID = levelID, LongestStreak = longestStreak, Playstyle = playstyle, WinRate = winRate, Games = games };
+      StatsResponse levelStatsResponse = new StatsResponse { Ace = ace, Nemesis = nemesis, ChoiceDistribution = choiceDistribution, LevelID = levelID, LongestStreak = longestStreak, Playstyle = playstyle, WinRate = winRate, Games = games };
 
-      statsInfo.Add(
-        levelStatsInfo
+      statsResponse.Add(
+        levelStatsResponse
       );
     }
 
-    return Results.Ok(statsInfo);
+    return Results.Ok(statsResponse);
   }
 
   public IResult GetPlayInfo(RPSDbContext db) {
     List<PlayInfo> playInfo = (
       from levelItem in db.LevelItems
-      select new PlayInfo(levelItem.ID, levelItem.Name)
+      select new PlayInfo { LevelID = levelItem.ID, Name = levelItem.Name }
     ).ToList();
     return Results.Ok(playInfo);
   }
 
-  public IResult CreateSession(SessionDetails session, RPSDbContext db) {
+  public IResult CreateSession(SessionRequest session, RPSDbContext db) {
     if (session.PlayerID == session.LevelID) { return Results.BadRequest("The two players in one session cannot be the same."); }
     int userID = (
       from userItem in db.UserItems
@@ -197,7 +197,7 @@ public class RouteHandler {
     }
   }
 
-  public IResult Play(PlayDetails play, RPSDbContext db) {
+  public IResult Play(PlayRequest play, RPSDbContext db) {
 
     if (play.PlayerChoice != "rock" && play.PlayerChoice != "paper" && play.PlayerChoice != "scissors") {
       return Results.BadRequest("Invalid choice.");
@@ -247,7 +247,7 @@ public class RouteHandler {
     db.MatchItems.Add(newMatch);
     db.SaveChanges();
 
-    PlayResponse playResponse = new PlayResponse(BotChoice, outcome);
+    PlayResponse playResponse = new PlayResponse { BotChoice = BotChoice, Result = outcome };
     return Results.Ok(playResponse);
   }
 
