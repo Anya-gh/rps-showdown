@@ -183,7 +183,6 @@ public class RouteHandler {
       db.SessionItems.Add(newSession);
       db.SaveChanges();
       int sessionID = db.SessionItems.Where(session => session.UserID == userID && session.StartedAt == startedAt).Select(session => session.ID).FirstOrDefault();
-      if (sessionID < 1) { return Results.StatusCode(500); }
       return Results.Ok(sessionID);
     }
     catch (Exception ex) {
@@ -194,6 +193,10 @@ public class RouteHandler {
   }
 
   public IResult Play(PlayDetails play, RPSDbContext db) {
+
+    if (play.PlayerChoice != "rock" && play.PlayerChoice != "paper" && play.PlayerChoice != "scissors") {
+      return Results.BadRequest("Invalid choice.");
+    }
 
     int userID = (
       from userItem in db.UserItems
