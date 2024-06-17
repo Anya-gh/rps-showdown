@@ -18,8 +18,8 @@ function Performance({ userStats } : PerformanceProps) {
             <h1 className="text-lg">Win Rate</h1>
           </span>
           <span className="mb-auto">
-            <p className="text-5xl mb-2">{Math.round(userStats.winRate*100)} %</p>
-            <p className="text-sm italic font-thin text-center">in {userStats.games} games</p>
+            <p className="text-5xl text-center mb-2">{Math.round(userStats.winRate*100)} %</p>
+            <p className="text-sm italic font-thin text-center">in {userStats.games} games (excluding draws)</p>
           </span>
         </div>
       </Card>

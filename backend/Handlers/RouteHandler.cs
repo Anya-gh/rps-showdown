@@ -71,8 +71,6 @@ public class RouteHandler {
         select match
       ).ToList();
 
-      int games = currentLevelMatches.Count();
-
       List<MatchesWithChoice> matchesWithChoice = choices.Select(choice => new MatchesWithChoice{ Choice = choice, Matches = (
         from match in currentLevelMatches
         where match.PlayerChoice == choice
@@ -101,10 +99,6 @@ public class RouteHandler {
       ).ToList() }).ToList();
 
       List<ChoiceStat> winsWithChoice = winningMatchesWithChoice.Select(choice => new ChoiceStat { Choice = choice.Choice, Stat = choice.Matches.Count() }).ToList();
-
-      float total = timesUsed.Sum(choice => (int)choice.Stat);
-      float wins = winsWithChoice.Sum(choice => (int)choice.Stat);
-      float winRate = wins / Math.Max(total, 1);
 
       List<ChoiceStat> winRateWithChoice = (
         from winChoice in winsWithChoice
@@ -155,6 +149,10 @@ public class RouteHandler {
 
       StyleHandler styleHandler = new StyleHandler();
       Playstyle playstyle = styleHandler.DetermineStyle(currentLevelMatches);
+
+      int games = currentLevelMatches.Where(match => match.Result != "draw").Count();
+      float wins = currentLevelMatches.Where(match => match.Result == "win").Count();
+      float winRate = wins / Math.Max(games, 1.0f);
       
       StatsResponse levelStatsResponse = new StatsResponse { Ace = ace, Nemesis = nemesis, ChoiceDistribution = choiceDistribution, LevelID = levelID, LongestStreak = longestStreak, Playstyle = playstyle, WinRate = winRate, Games = games };
 
