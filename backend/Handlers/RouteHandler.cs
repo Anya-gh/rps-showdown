@@ -36,11 +36,6 @@ public class RouteHandler {
 
   public IResult Stats(StatsRequest user, RPSDbContext db) {
 
-    ChoiceDistribution ChoiceDistribution(float rock, float paper, float scissors) {
-      var total = Math.Max(rock + paper + scissors, 1);
-      return new ChoiceDistribution {Rock = rock/total, Paper = paper/total, Scissors = scissors/total };
-    }
-
     int? userID = (
       from userItem in db.UserItems
       where userItem.Username == user.Username
@@ -71,6 +66,8 @@ public class RouteHandler {
         select match
       ).ToList();
 
+      StatsHandler statsHandler = new StatsHandler();
+
       List<MatchesWithChoice> matchesWithChoice = choices.Select(choice => new MatchesWithChoice{ Choice = choice, Matches = (
         from match in currentLevelMatches
         where match.PlayerChoice == choice
@@ -79,77 +76,19 @@ public class RouteHandler {
 
       List<ChoiceStat> timesUsed = matchesWithChoice.Select(choice => new ChoiceStat { Choice = choice.Choice, Stat = choice.Matches.Count() }).ToList();
 
-      var rockStat = timesUsed.Where(choice => choice.Choice == "rock").FirstOrDefault();
-      float rockUsed = rockStat == null ? 0 : rockStat.Stat;
-      var paperStat = timesUsed.Where(choice => choice.Choice == "paper").FirstOrDefault();
-      float paperUsed = paperStat == null ? 0 : paperStat.Stat;
-      var scissorsStat = timesUsed.Where(choice => choice.Choice == "scissors").FirstOrDefault();
-      float scissorsUsed = scissorsStat == null ? 0 : scissorsStat.Stat;
+      ChoiceDistribution choiceDistribution = statsHandler.GetChoiceDistribution(timesUsed);
 
-      ChoiceDistribution choiceDistribution = ChoiceDistribution(
-        rockUsed,
-        paperUsed,
-        scissorsUsed
-      );
+      string ace = statsHandler.GetAce(currentLevelMatches, timesUsed);
 
-      var winningMatchesWithChoice = choices.Select(choice => new MatchesWithChoice{ Choice = choice, Matches = (
-        from match in currentLevelMatches
-        where match.PlayerChoice == choice && match.Result == "win"
-        select match
-      ).ToList() }).ToList();
+      string nemesis = statsHandler.GetNemesis(currentLevelMatches, timesUsed);
 
-      List<ChoiceStat> winsWithChoice = winningMatchesWithChoice.Select(choice => new ChoiceStat { Choice = choice.Choice, Stat = choice.Matches.Count() }).ToList();
+      int longestStreak = statsHandler.GetLongestWinStreak(currentLevelMatches);
 
-      List<ChoiceStat> winRateWithChoice = (
-        from winChoice in winsWithChoice
-        join totalChoice in timesUsed on winChoice.Choice equals totalChoice.Choice
-        select new ChoiceStat { Choice = winChoice.Choice, Stat = winChoice.Stat / Math.Max(totalChoice.Stat, 1) }
-      ).ToList();
-
-      ChoiceStat? aceChoiceStat = winRateWithChoice.MaxBy(choice => choice.Stat);
-      string ace = "none";
-      if (aceChoiceStat != null && aceChoiceStat.Stat != 0) { ace = aceChoiceStat.Choice; }
-
-      var losingMatchesAgainstChoice = choices.Select(choice => new MatchesWithChoice { Choice = choice, Matches = (
-        from match in currentLevelMatches
-        where match.LevelChoice == choice && match.Result == "lose"
-        select match
-      ).ToList() }).ToList();
-
-      List<ChoiceStat> lossesAgainstChoice = losingMatchesAgainstChoice.Select(choice => new ChoiceStat { Choice = choice.Choice, Stat = choice.Matches.Count() }).ToList();
-
-      List<ChoiceStat> loseRateAgainstChoice = (
-        from winChoice in lossesAgainstChoice
-        join totalChoice in timesUsed on winChoice.Choice equals totalChoice.Choice
-        select new ChoiceStat{ Choice = winChoice.Choice, Stat =  winChoice.Stat / Math.Max(totalChoice.Stat, 1) }
-      ).ToList();
-      
-      ChoiceStat? nemesisChoiceStat = loseRateAgainstChoice.MaxBy(choice => choice.Stat);
-      string nemesis = "none";
-      if (nemesisChoiceStat != null && nemesisChoiceStat.Stat != 0) { nemesis = nemesisChoiceStat.Choice; }
-
-      /* --- longest streak --- */
-
-      var sequentialMatches = currentLevelMatches.OrderBy(match => match.ID)
-      .Select((match, index) => new SequentialMatch {
-        SessionID = match.SessionID,
-        MatchNumber = index + 1,
-        IsWin = match.Result == "win" ? 1 : 0
-      });
-
-      var winGroups = sequentialMatches.OrderBy(match => match.MatchNumber)
-      .Select(match => new WinGroup {
-        sequentialMatch = match,
-        GroupID = match.MatchNumber - sequentialMatches.Take(match.MatchNumber).Sum(match => match.IsWin)
-      })
-      .Where(match => match.sequentialMatch.IsWin == 1);
-
-      var winStreaks = winGroups.GroupBy(winGroup => (winGroup.sequentialMatch.SessionID, winGroup.GroupID)).Select(group => group.Count()).ToList();
-      var longestStreak = winStreaks.Count() > 0 ? winStreaks.Max() : 0;
-
+      // Playstyle
       StyleHandler styleHandler = new StyleHandler();
       Playstyle playstyle = styleHandler.DetermineStyle(currentLevelMatches);
 
+      // Games and Win Rate
       int games = currentLevelMatches.Where(match => match.Result != "draw").Count();
       float wins = currentLevelMatches.Where(match => match.Result == "win").Count();
       float winRate = wins / Math.Max(games, 1.0f);
