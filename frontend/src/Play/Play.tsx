@@ -10,6 +10,7 @@ import ConfirmChange from "./ConfirmChange"
 import PlayerSide from "./PlayerSide"
 import OpponentSide from "./OpponentSide"
 import signOut from "../components/SignOut"
+import circleIcon from "../assets/circle.svg"
 
 /*
 TODO:
@@ -38,7 +39,7 @@ export default function Play() {
   const [chosenPlayer, setChosenPlayer] = useState<number>(player)
   const [modalOpen, setModalOpen] = useState(false)
   const [error, setError] = useState<string>()
-  const playerNames = [localStorage.getItem("username") != null ? `${localStorage.getItem("username")} (Player)` : "Player", "Beginner", "Intermediate", "Advanced"]
+  const playerNames = ["Player", "Beginner", "Intermediate", "Advanced"]
 
   const handleSetPlayer = (newChosenPlayer: number) => {
     const actualChosenPlayer = newChosenPlayer == 0 ? -1 : newChosenPlayer
@@ -143,12 +144,17 @@ export default function Play() {
     <div className="flex flex-col items-center px-5 pt-2 pb-5 w-screen">
       <ConfirmChange modalOpen={modalOpen} setModalOpen={setModalOpen} chosenLevel={chosenLevel} chosenPlayer={chosenPlayer} handleCancel={handleCancel} handleStart={handleStart}/>
 
-      <span className='flex flex-row justify-end w-full pb-16'>
-        <button onClick={() => navigate("/stats")} className="text-zinc-500 font-bold mr-4">Stats</button>
-        <button onClick={() => signOut(navigate)} className="text-zinc-500 font-bold">Sign out</button>
+      <span className='flex flex-row justify-center w-full pb-16'>
+        <button onClick={() => navigate("/stats")} className="text-zinc-500 font-bold mr-4 transition duration-200 md:hover:scale-105 md:hover:text-white">Stats</button>
+        <img className="w-2 mr-4" src={circleIcon} />
+        <button onClick={() => signOut(navigate)} className="text-zinc-500 font-bold transition duration-200 md:hover:scale-105 md:hover:text-white">Sign out</button>
       </span>
 
       <Header />
+      <span className="w-40 text-center flex flex-col mt-5">
+        <p className="font-thin italic text-xs text-zinc-400">logged in as </p>
+        <h1 className="truncate">{localStorage.getItem("username")}</h1>
+      </span>
       
       { player == -1 ? // changed from chosenPlayer to player, shouldn't break anything
         // Choose option between rock, paper, scissors

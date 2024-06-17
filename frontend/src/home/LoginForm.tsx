@@ -30,19 +30,20 @@ function LoginForm({ setLoggedIn } : LoginFormProps) {
       headers: { "Content-Type" : "application/json" },
       body: JSON.stringify({"Username" : username, "Password" : password})
     })
-    if (!request.ok) {
+    if (request == undefined || request == null) { console.error("There was an error with the request.") }
+    else if (!request.ok) {
       if (request.status == 401) { // Unauthorized
         setError("Username and password combination is incorrect. If you were trying to register, please choose a different username.")
       }
-      throw new Error(request.statusText);
+      console.error(request.statusText);
     }
-    else {
+    else if (request.ok) {
       const response = await request.json() as string
       console.log(response);
       localStorage.setItem("token", response);
       localStorage.setItem("username", username)
+      setLoggedIn(true)
     }
-    setLoggedIn(true)
     // fetch post
   }
 

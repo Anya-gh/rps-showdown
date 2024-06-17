@@ -12,16 +12,13 @@ function Levels({ level, setLevel } : LevelsProps) {
   const levelNames = ["Beginner", "Intermediate", "Advanced"]
 
   return (
-    <div className="flex flex-row items-center w-3/4 md:w-1/2 justify-evenly font-bold mt-5">
-      <h1>{localStorage.getItem("username") != null ? `${localStorage.getItem("username")} (Player)` : "Player"}</h1>
-      <p>vs</p>
-      <div>
+    <div className="flex flex-col items-center w-3/4 md:w-1/2 justify-center font-bold mt-5">
         <button onClick={() => setShowLevels(prev => !prev)} className="flex flex-row items-center">
-          <h1 className="mr-3">{levelNames[level]}</h1>
+          <h1 className="mr-3">Player vs {levelNames[level]}</h1>
           <img className={`w-3 transition duration-200 ${!showLevels && "rotate-180"}`} src={dropdown} />
         </button>
         {showLevels && 
-          <div className="absolute pt-3 z-10">
+          <div className="absolute mt-28 z-10">
             <ul className="bg-[#202020] rounded-xl p-2 flex flex-col w-32 items-start">
               {levelNames.map((levelName, index) => {
                 if (index != level) return (<button key={levelName} onClick={() => {setShowLevels(false); setLevel(index)}}><h1>{levelName}</h1></button>)
@@ -29,7 +26,6 @@ function Levels({ level, setLevel } : LevelsProps) {
             </ul>
           </div>
         }
-      </div>
     </div>
   )
 }

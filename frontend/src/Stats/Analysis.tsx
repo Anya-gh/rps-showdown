@@ -86,14 +86,14 @@ function Analysis({ userStats } : AnalysisProps) {
       <div className="flex flex-col md:flex-row items-center justify-evenly text-lg">
         <Card>
           <span className="flex flex-col items-center mb-5">
-            <h1 className="mb-5 text-lg">Choice Distribution</h1>
+            <h1 className="mb-5 text-lg font-bold">Choice Distribution</h1>
             <span className="w-40">{choiceDistData && <Pie data={choiceDistData} options={options}/>}</span>
           </span>
         </Card>
         <Card>
           <span className={`flex flex-col items-center mb-5 ${userStats.ace == "none" && "justify-center h-full"}`}>
             <span className={`${userStats.ace != "none" ? "mb-5" : "mb-auto"}`}>
-            <h1 className={`text-lg font-bold`}>Ace</h1>
+            <h1 className="text-lg font-bold text-center">Ace</h1>
             <p className="font-thin italic text-xs">The option you've won the most with</p>
             </span>
             {userStats.ace != "none" ? <img className="w-16" src={ace} /> : <h1 className="text-3xl font-bold mb-auto">None</h1>}
@@ -102,7 +102,7 @@ function Analysis({ userStats } : AnalysisProps) {
         <Card>
           <span className={`flex flex-col items-center mb-5 ${userStats.nemesis == "none" && "justify-center h-full"}`}>
             <span className={`${userStats.nemesis != "none" ? "mb-5" : "mb-auto"}`}>
-            <h1 className={`text-lg font-bold mb-1`}>Nemesis</h1>
+            <h1 className="text-lg font-bold mb-1 text-center">Nemesis</h1>
             <p className="font-thin italic text-xs">The option you've lost the most against</p>
             </span>
             {userStats.nemesis != "none" ? <img className="w-16" src={nemesis} /> : <h1 className="text-3xl font-bold mb-auto">None</h1>}

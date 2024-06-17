@@ -36,7 +36,7 @@ public class StyleHandler : IStyleHandler {
       case "passive":
         return new Playstyle { Style = "passive", Description = "You keep your cool and stick to a plan. You don't like changing your mind." };
       case "balanced":
-        return new Playstyle { Style = "balanced", Description = "You have a good balance to staying your ground and throwing off your opponent." };
+        return new Playstyle { Style = "balanced", Description = "You have a good balance of staying your ground and throwing off your opponent." };
       default:
         return new Playstyle { Style = "none", Description = "Play some more games to find out what your style is!" };
     }
