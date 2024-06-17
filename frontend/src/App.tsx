@@ -3,6 +3,7 @@ import Home from "./home/Home"
 import About from "./About/About"
 import Play from "./Play/Play"
 import Stats from "./Stats/Stats"
+import Credits from "./Credits/Credits"
 
 function App() {
 
@@ -13,6 +14,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/play" element={<Play />} />
         <Route path="/stats" element={<Stats />} />
+        <Route path="/credits" element={<Credits />} />
       </Routes>
     </>
   )
