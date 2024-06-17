@@ -20,7 +20,7 @@ export default function Home() {
     <div className="flex flex-col items-center px-5 py-20 w-screen">
       <Header />
       {loggedIn ? <PlayOrStats setLoggedIn={setLoggedIn}/> : <LoginForm setLoggedIn={setLoggedIn} />}
-      <div className="h-[30rem] flex flex-col items-center justify-evenly">
+      <div className="h-[30rem] flex flex-col md:flex-row md:w-[60rem] md:h-auto items-center justify-evenly">
         <InfoCard title={"Track your stats"} img={statsIcon} content="Track your wins, losses and more! Reflect on your matches against AI, see where your weakness lie and improve."/>
         <InfoCard title={"Challenge different levels"} img={difficultyIcon} content="Change the difficulty to suit you. If you think you can take it on, try our advanced difficulty!"/>
         <InfoCard title={"Spectate AI"} img={spectateIcon} content="Need a breather? Watch the AI play itself. Choose which levels will be competing, and take notes!"/>
