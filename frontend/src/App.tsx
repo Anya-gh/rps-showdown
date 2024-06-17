@@ -3,12 +3,8 @@ import Home from "./home/Home"
 import About from "./About/About"
 import Play from "./Play/Play"
 import Stats from "./Stats/Stats"
-import { useState } from "react"
 
 function App() {
-
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
 
   return (
     <>
