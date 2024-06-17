@@ -11,6 +11,8 @@ export default function Credits() {
         <li><a className="text-blue-400" target="_blank" href="https://icons8.com/icon/RlXIngfmfHJq/statistic">Statistic</a> icon by <a className="text-blue-400" target="_blank" href="https://icons8.com">Icons8</a></li>
         <li><a className="text-blue-400" href="https://www.flaticon.com/free-icons/speedometer" title="speedometer icons">Speedometer icons created by Freepik - Flaticon</a></li>
         <li><a className="text-blue-400" href="https://www.flaticon.com/free-icons/eye" title="eye icons">Eye icons created by Gregor Cresnar - Flaticon</a></li>
+        <li><a className="text-blue-400" href="https://www.flaticon.com/free-icons/trophy" title="trophy icons">Trophy icons created by Creative Stall Premium - Flaticon</a></li>
+        <li><a className="text-blue-400" href="https://www.flaticon.com/free-icons/fire" title="fire icons">Fire icons created by C-mo Box - Flaticon</a></li>
       </ul>
     </div>
   )
