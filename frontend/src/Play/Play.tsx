@@ -24,7 +24,6 @@ export default function Play() {
     Modal.setAppElement('body')
   }, [])
 
-  // session should be localStorage
   const [choice, setChoice] = useState<string>()
   const [playResponse, setPlayResponse] = useState<PlayType>()
   const [wins, setWins] = useState(0)
@@ -175,10 +174,10 @@ export default function Play() {
       </span>
       <Header />
       { chosenPlayer == -1 ?
-        <div className="flex flex-row items-center justify-evenly w-full mt-5 mb-5">
-          <Option name="rock" img={rock} setChoice={setChoice} setPlayResponse={setPlayResponse} setWins={setWins} setDraws={setDraws} setLosses={setLosses} level={level} />
-          <Option name="paper" img={paper} setChoice={setChoice} setPlayResponse={setPlayResponse} setWins={setWins} setDraws={setDraws} setLosses={setLosses} level={level} />
-          <Option name="scissors" img={scissors} setChoice={setChoice} setPlayResponse={setPlayResponse} setWins={setWins} setDraws={setDraws} setLosses={setLosses} level={level} />
+        <div className="flex flex-row items-center justify-evenly w-full mt-5 mb-5 md:w-[40rem]">
+          <Option name="rock" choice={choice} img={rock} setChoice={setChoice} setPlayResponse={setPlayResponse} setWins={setWins} setDraws={setDraws} setLosses={setLosses} level={level} />
+          <Option name="paper" choice={choice} img={paper} setChoice={setChoice} setPlayResponse={setPlayResponse} setWins={setWins} setDraws={setDraws} setLosses={setLosses} level={level} />
+          <Option name="scissors" choice={choice} img={scissors} setChoice={setChoice} setPlayResponse={setPlayResponse} setWins={setWins} setDraws={setDraws} setLosses={setLosses} level={level} />
         </div>
         :
         <button onClick={handleSpectate} className="w-24 h-24 bg-[#303030] drop-shadow-xl rounded-sm p-2 flex flex-col items-center mt-5 mb-5">
@@ -187,10 +186,13 @@ export default function Play() {
           <p className='text-xs text-zinc-400'>Spectate a round.</p>
         </button>
       }
-      <div className="h-[30rem] flex flex-col items-center justify-evenly">
+      { chosenPlayer == -1 && <h1 className={`text-xl tracking-wide font-bold ${playResponse?.result == "win" && "text-green-400"} ${playResponse?.result == "draw" && "text-yellow-400"} ${playResponse?.result == "lose" && "text-red-400"}`}>{playResponse?.result.toUpperCase()}</h1>
+
+      }
+      <div className="h-[30rem] flex flex-col md:flex-row md:h-auto md:w-[40rem] items-center justify-evenly">
         <div className="flex flex-col items-center">
           <div>
-            <button onClick={() => setShowPlayers(prev => !prev)} className="mb-3 flex flex-row items-center"><h1 className="font-bold mr-3">{player == -1 ? playerNames[0] : playerNames[player]}</h1><img className={`w-3 ${!showPlayers && "rotate-180"}`} src={dropdown} /></button>
+            <button onClick={() => setShowPlayers(prev => !prev)} className="mb-3 flex flex-row items-center"><h1 className="font-bold mr-3">{player == -1 ? playerNames[0] : playerNames[player]}</h1><img className={`w-3 transition duration-200 ${!showPlayers && "rotate-180"}`} src={dropdown} /></button>
           </div>
           {showPlayers && 
               <div className="absolute mt-12 z-10">
@@ -201,12 +203,12 @@ export default function Play() {
                 </ul>
               </div>
             }
-          <Choice option={choice} />
+          <Choice choice={choice} />
         </div>
         <p className="font-bold">vs</p>
         <div className="flex flex-col items-center">
           <div>
-            <button onClick={() => setShowLevels(prev => !prev)} className="mb-3 flex flex-row items-center"><h1 className="font-bold mr-3">{level != undefined ? levelNames[level] : "Select a level"}</h1><img className={`w-3 ${!showLevels && "rotate-180"}`} src={dropdown} /></button>
+            <button onClick={() => setShowLevels(prev => !prev)} className="mb-3 flex flex-row items-center"><h1 className="font-bold mr-3">{level != undefined ? levelNames[level] : "Select a level"}</h1><img className={`w-3 transition duration-200 ${!showLevels && "rotate-180"}`} src={dropdown} /></button>
             {showLevels && 
               <div className="absolute mt-3 z-10">
                 <ul className="bg-[#202020] rounded-xl p-2 flex flex-col w-32 items-start">
@@ -217,7 +219,7 @@ export default function Play() {
               </div>
             }
           </div>
-          <Choice option={playResponse?.botChoice} />
+          <Choice choice={playResponse?.botChoice} />
         </div>
       </div>
       <div className="flex flex-col items-center mt-5">
@@ -231,6 +233,7 @@ export default function Play() {
 
 type OptionProps = {
   name: string,
+  choice: string | undefined,
   img: string,
   setChoice: Dispatch<SetStateAction<string | undefined>>,
   setPlayResponse: Dispatch<SetStateAction<PlayType | undefined>>,
@@ -240,7 +243,8 @@ type OptionProps = {
   level: number | undefined
 }
 
-function Option({ name, img, setChoice, setPlayResponse, setWins, setDraws, setLosses, level } : OptionProps) {
+function Option({ name, choice, img, setChoice, setPlayResponse, setWins, setDraws, setLosses, level } : OptionProps) {
+
 
   const handleOption = async () => {
     console.log(JSON.stringify({
@@ -272,27 +276,27 @@ function Option({ name, img, setChoice, setPlayResponse, setWins, setDraws, setL
   }
 
   return (
-    <button onClick={handleOption} className="w-24 h-24 bg-[#303030] drop-shadow-xl rounded-sm p-2 flex flex-col items-center">
-      <h1 className="font-bold text-xs capitalize">{name}</h1>
+    <button onClick={handleOption} className="w-24 h-24 transition duration-200 md:hover:scale-110 bg-[#303030] drop-shadow-xl rounded-sm p-2 flex flex-col items-center">
+      <h1 className={`font-bold text-xs capitalize ${choice == name && "text-blue-400"}`}>{name}</h1>
       <img className="w-8 m-auto" src={img} />
     </button>
   )
 }
 
 type ChoiceProps = {
-  option: string | undefined
+  choice: string | undefined
 }
 
-function Choice({ option } : ChoiceProps) {
+function Choice({ choice } : ChoiceProps) {
 
   const [img, setImg] = useState<string>()
 
   useEffect(() => {
-    if (option == "rock") { setImg(rock) }
-    else if (option == "paper") { setImg(paper) }
-    else if (option == "scissors") { setImg(scissors) }
+    if (choice == "rock") { setImg(rock) }
+    else if (choice == "paper") { setImg(paper) }
+    else if (choice == "scissors") { setImg(scissors) }
     else { setImg(undefined) }
-  }, [option])
+  }, [choice])
 
   return (
     <div className="w-40 h-40 bg-[#303030] drop-shadow-xl rounded-sm p-2 flex flex-col items-center justify-center">
