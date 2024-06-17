@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import playButtonIcon from "../assets/play-button.png"
 import statsButtonIcon from "../assets/stats-button.png"
 import { useNavigate } from "react-router-dom";
+import signOut from "../components/SignOut";
 
 type PlayOrStatsProps = {
   setLoggedIn: Dispatch<SetStateAction<boolean>>
@@ -13,8 +14,7 @@ function PlayOrStats({ setLoggedIn } : PlayOrStatsProps) {
 
   const signOutHandler = () => {
     setLoggedIn(false);
-    localStorage.removeItem("token")
-    localStorage.removeItem("username")
+    signOut(navigate);
   }
 
   return (
