@@ -131,6 +131,14 @@ export default function Play() {
     }
   }
 
+  // If modal is open close lists
+  useEffect(() => {
+    if (modalOpen) {
+      setShowLevels(false)
+      setShowPlayers(false)
+    }
+  }, [modalOpen])
+
   return (
     <div className="flex flex-col items-center px-5 pt-2 pb-5 w-screen">
       <ConfirmChange modalOpen={modalOpen} setModalOpen={setModalOpen} chosenLevel={chosenLevel} chosenPlayer={chosenPlayer} handleCancel={handleCancel} handleStart={handleStart}/>
