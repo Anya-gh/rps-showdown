@@ -31,6 +31,9 @@ function LoginForm({ setLoggedIn } : LoginFormProps) {
       body: JSON.stringify({"Username" : username, "Password" : password})
     })
     if (!request.ok) {
+      if (request.status == 401) { // Unauthorized
+        setError("Username and password combination is incorrect. If you were trying to register, please choose a different username.")
+      }
       throw new Error(request.statusText);
     }
     else {
