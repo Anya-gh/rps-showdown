@@ -38,7 +38,7 @@ export default function Play() {
   const [chosenPlayer, setChosenPlayer] = useState<number>(player)
   const [modalOpen, setModalOpen] = useState(false)
   const [error, setError] = useState<string>()
-  const playerNames = ["Player", "Beginner", "Intermediate", "Advanced"]
+  const playerNames = [localStorage.getItem("username") != null ? `${localStorage.getItem("username")} (Player)` : "Player", "Beginner", "Intermediate", "Advanced"]
 
   const handleSetPlayer = (newChosenPlayer: number) => {
     const actualChosenPlayer = newChosenPlayer == 0 ? -1 : newChosenPlayer

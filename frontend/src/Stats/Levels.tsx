@@ -13,7 +13,7 @@ function Levels({ level, setLevel } : LevelsProps) {
 
   return (
     <div className="flex flex-row items-center w-3/4 md:w-1/2 justify-evenly font-bold mt-5">
-      <h1>Player</h1>
+      <h1>{localStorage.getItem("username") != null ? `${localStorage.getItem("username")} (Player)` : "Player"}</h1>
       <p>vs</p>
       <div>
         <button onClick={() => setShowLevels(prev => !prev)} className="flex flex-row items-center">
