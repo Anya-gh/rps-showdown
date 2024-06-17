@@ -151,7 +151,10 @@ public class RouteHandler {
       var winStreaks = winGroups.GroupBy(winGroup => (winGroup.sequentialMatch.SessionID, winGroup.GroupID)).Select(group => group.Count()).ToList();
       var longestStreak = winStreaks.Count() > 0 ? winStreaks.Max() : 0;
 
-      StatsInfo levelStatsInfo = new StatsInfo { Ace = ace, Nemesis = nemesis, ChoiceDistribution = choiceDistribution, LevelID = levelID, LongestStreak = longestStreak, Style = "none", WinRate = winRate };
+      StyleHandler styleHandler = new StyleHandler();
+      Playstyle playstyle = styleHandler.DetermineStyle(currentLevelMatches);
+      
+      StatsInfo levelStatsInfo = new StatsInfo { Ace = ace, Nemesis = nemesis, ChoiceDistribution = choiceDistribution, LevelID = levelID, LongestStreak = longestStreak, Playstyle = playstyle, WinRate = winRate };
 
       statsInfo.Add(
         levelStatsInfo

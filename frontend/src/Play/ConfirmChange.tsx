@@ -16,7 +16,7 @@ function ConfirmChange({ modalOpen, setModalOpen, chosenLevel, chosenPlayer, han
     <Modal
       isOpen={modalOpen}
       onRequestClose={() => setModalOpen(false)}
-      className="w-screen h-screen flex flex-col items-center justify-center bg-black opacity-70"
+      className="w-screen h-screen flex flex-col items-center justify-center bg-black opacity-70 z-20"
     >
       <div>
         <div className="w-60 bg-[#303030] text-center rounded-xl p-3">

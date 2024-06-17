@@ -83,7 +83,7 @@ function Analysis({ userStats } : AnalysisProps) {
 
   return (
     <div className="w-full mt-5">
-      <div className="flex flex-col md:flex-row items-center justify-evenly text-lg font-bold">
+      <div className="flex flex-col md:flex-row items-center justify-evenly text-lg">
         <Card>
           <span className="flex flex-col items-center mb-5">
             <h1 className="mb-5 text-lg">Choice Distribution</h1>
@@ -92,20 +92,29 @@ function Analysis({ userStats } : AnalysisProps) {
         </Card>
         <Card>
           <span className={`flex flex-col items-center mb-5 ${userStats.ace == "none" && "justify-center h-full"}`}>
-            <h1 className={`text-lg ${userStats.ace != "none" ? "mb-5" : "mb-auto"}`}>Ace</h1>
-            {userStats.ace != "none" ? <img className="w-24" src={ace} /> : <h1 className="text-3xl mb-auto">None</h1>}
+            <span className={`${userStats.ace != "none" ? "mb-5" : "mb-auto"}`}>
+            <h1 className={`text-lg font-bold`}>Ace</h1>
+            <p className="font-thin italic text-xs">The option you've won the most with</p>
+            </span>
+            {userStats.ace != "none" ? <img className="w-20" src={ace} /> : <h1 className="text-3xl font-bold mb-auto">None</h1>}
           </span>
         </Card>
         <Card>
           <span className={`flex flex-col items-center mb-5 ${userStats.nemesis == "none" && "justify-center h-full"}`}>
-            <h1 className={`text-lg ${userStats.nemesis != "none" ? "mb-5" : "mb-auto"}`}>Nemesis</h1>
-            {userStats.nemesis != "none" ? <img className="w-24" src={nemesis} /> : <h1 className="text-3xl mb-auto">None</h1>}
+            <span className={`${userStats.nemesis != "none" ? "mb-5" : "mb-auto"}`}>
+            <h1 className={`text-lg font-bold mb-1`}>Nemesis</h1>
+            <p className="font-thin italic text-xs">The option you've lost the most against</p>
+            </span>
+            {userStats.nemesis != "none" ? <img className="w-20" src={nemesis} /> : <h1 className="text-3xl font-bold mb-auto">None</h1>}
           </span>
         </Card>
         <Card>
         <div className="flex flex-col items-center justify-center h-full">
-            <h1 className="text-lg mb-auto">Playstyle</h1>
-            <p className="text-3xl mb-auto capitalize">{userStats.style}</p>
+            <h1 className="text-lg font-bold mb-auto">Playstyle</h1>
+            <span className="mb-auto p-3">
+              <p className="text-3xl font-bold capitalize text-center mb-2">{userStats.playstyle.style}</p>
+              <p className="text-xs font-thin italic">{userStats.playstyle.description}</p>
+            </span>
         </div>
         </Card>
       </div>

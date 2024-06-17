@@ -8,7 +8,10 @@ export type StatsType = {
   },
   ace: string,
   nemesis: string,
-  style: string,
+  playstyle: {
+    style: string,
+    description: string
+  },
   levelID: number
 }
 

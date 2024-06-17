@@ -5,7 +5,7 @@ public class StatsInfo {
   public ChoiceDistribution ChoiceDistribution { get; set; }
   public string Ace { get; set; }
   public string Nemesis { get; set; }
-  public string Style { get; set; }
+  public Playstyle Playstyle { get; set; }
   public int LevelID { get; set; }
 }
 
