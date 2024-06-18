@@ -1,8 +1,8 @@
 import { Routes, Route } from "react-router-dom"
-import Home from "./Home/Home"
 import Play from "./Play/Play"
 import Stats from "./Stats/Stats"
 import Credits from "./Credits/Credits"
+import Home from "./Home/Home"
 
 function App() {
 
