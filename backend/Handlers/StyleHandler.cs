@@ -1,10 +1,4 @@
-using System.Diagnostics.Eventing.Reader;
-
-public interface IStyleHandler {
-  public Playstyle DetermineStyle(List<Match> matches);
-
-}
-public class StyleHandler : IStyleHandler {
+public class StyleHandler {
 
   public Playstyle DetermineStyle(List<Match> matches) {
     if (matches.Count() == 0) { return GetStyle("none"); }

@@ -2,10 +2,11 @@ using System.Numerics;
 using MathNet.Numerics.LinearAlgebra;
 
 public interface IBotHandler {
-
+  public IBot? GetBot(int levelID);
+  public string DetermineResult(string playerChoice, string levelChoice);
 }
 
-public class BotHandler {
+public class BotHandler : IBotHandler {
 
   public BotHandler() { }
   public IBot? GetBot(int levelID) {

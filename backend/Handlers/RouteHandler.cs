@@ -4,10 +4,16 @@ using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 
 public interface IRouteHandler {
-
+  public IResult Login(UserRequest user, RPSDbContext db);
+  public IResult Stats(StatsRequest user, RPSDbContext db);
+  public IResult GetPlayInfo(RPSDbContext db);
+  public IResult CreateSession(SessionRequest session, RPSDbContext db);
+  public IResult Play(PlayRequest play, RPSDbContext db);
+  public IResult Spectate(SpectateRequest request, RPSDbContext db);
+  public IResult ValidUser();
 }
 
-public class RouteHandler {
+public class RouteHandler : IRouteHandler {
 
   private SecurityHandler SecurityHandler { get; set; }
 
