@@ -63,8 +63,8 @@ The advanced bot uses a Markov chain. This is a fundamental system in machine le
 
 To do so it constructs a transition matrix, which looks like this:
 
-  [(R->R), (R->P), (R->S),
-   (P->R), (P->P), (P->S),
+  [(R->R), (R->P), (R->S),\
+   (P->R), (P->P), (P->S),\
    (S->R), (S->P), (S->S)]
 
 where X->Y is the probability of choosing Y after just choosing X. To get the probability of X->Y, it calculates: (no. of times X->Y / no. of times X). Then, if we now take X to be the player's previous choice, it finds what the player is most likely to do by picking the Y with the greatest X->Y probability; the choice they're most likely to pick given they just picked X.
