@@ -24,6 +24,10 @@ The frontend is build in React with Typescript. The CSS is done using Tailwind. 
 
 If you try to login and nothing happens, or any other buttons stop working, please check the browser console. It may be a CORS issue. I have implemented a CORS policy so this should not happen, but it has happened several times on my Firefox browser and seems to fix itself every time. If it happens, please try another window, tab, browser or machine.
 
+# GitHub folder name desync
+
+For some reason GitHub isn't recognising that the path to a file changes when a folder name changes, at least for me at the moment. I believe I have fixed the issue, but if the app throws an error related to the `Home` component, please try renaming the `./frontend/src/Home` folder that the `Home` component to something else, saving, and then renaming it back. If it still doesn't work please let me know. Unfortunately this is not something I can easily control as it works on my end which is synced with the GitHub repository.
+
 # Database
 
 The database is empty. If you want to reset it after using it, you can:
